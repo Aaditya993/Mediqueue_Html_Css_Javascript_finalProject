@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doctor Login — MediQueue</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── Doctor Login page specific ── */
+    .login-page {
+      min-height: calc(100vh - var(--navbar-h));
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* ── Left panel (illustration/branding) ── */
+    .login-panel-left {
+      background: linear-gradient(160deg, var(--forest) 0%, var(--forest-mid) 65%, #3d7a58 100%);
+      padding: 4rem 3.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+    .login-panel-left::before {
+      content: '';
+      position: absolute;
+      top: -150px; right: -150px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(201,168,76,0.14) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    
+    .login-left-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      position: relative;
+      z-index: 1;
+    }
+    .login-left-logo-icon {
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-left-logo-text {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+    .login-left-logo-text span { color: var(--gold-light); }
+
+    .login-left-body {
+      position: relative;
+      z-index: 1;
+    }
+    .login-left-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(201,168,76,0.18);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 100px;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 1.75rem;
+    }
+    .login-left-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.25rem;
+    }
+    .login-left-title em { font-style: italic; color: var(--gold-light); }
+    .login-left-desc {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.8;
+      max-width: 400px;
+      margin-bottom: 2.5rem;
+    }
+    .login-features {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .login-feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+    }
+    .login-feature-icon {
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+      margin-top: 0.05rem;
+    }
+    .login-feature-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .login-feature-desc {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.5);
+      margin-top: 0.15rem;
+      line-height: 1.5;
+    }
+
+    .login-left-footer {
+      position: relative;
+      z-index: 1;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.35);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 1.5rem;
+    }
+
+    /* ── Right panel (form) ── */
+    .login-panel-right {
+      background: var(--ivory);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+    .login-form-wrap {
+      width: 100%;
+      max-width: 440px;
+    }
+    .login-form-header {
+      margin-bottom: 2.25rem;
+    }
+    .login-form-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--forest-mid);
+      margin-bottom: 0.65rem;
+    }
+    .login-form-title {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--forest);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+    .login-form-sub {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── Form ── */
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--charcoal-mid);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .form-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .form-input-icon {
+      position: absolute;
+      left: 0.9rem;
+      font-size: 1rem;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    .form-input {
+      width: 100%;
+      padding: 0.82rem 1rem 0.82rem 2.65rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      color: var(--charcoal);
+      background: #fff;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .form-input:focus {
+      border-color: var(--forest-mid);
+      box-shadow: 0 0 0 3px rgba(44,92,66,0.08);
+    }
+    .form-input::placeholder { color: var(--muted); opacity: 0.7; }
+    .form-input-toggle {
+      position: absolute;
+      right: 0.9rem;
+      background: none;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      opacity: 0.45;
+      transition: opacity var(--transition);
+      padding: 0;
+      line-height: 1;
+    }
+    .form-input-toggle:hover { opacity: 0.8; }
+
+    .form-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    .form-checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--charcoal-mid);
+      cursor: pointer;
+      user-select: none;
+    }
+    .form-checkbox-label input[type=checkbox] {
+      width: 16px; height: 16px;
+      accent-color: var(--forest);
+      cursor: pointer;
+      border-radius: 3px;
+    }
+    .form-forgot {
+      font-size: 0.85rem;
+      color: var(--forest-mid);
+      font-weight: 600;
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    .form-forgot:hover { color: var(--forest); text-decoration: underline; }
+
+    .login-btn {
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      background: var(--forest);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background var(--transition), box-shadow var(--transition), transform var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .login-btn:hover {
+      background: var(--forest-mid);
+      box-shadow: 0 6px 20px rgba(44,92,66,0.25);
+      transform: translateY(-1px);
+    }
+    .login-btn:active { transform: translateY(0); }
+    .login-btn.loading { opacity: 0.7; pointer-events: none; }
+
+    .login-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+    .login-divider::before, .login-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Badge login options */
+    .login-alt-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .login-alt-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 0.7rem 1rem;
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--charcoal-mid);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .login-alt-btn:hover {
+      border-color: var(--forest-mid);
+      color: var(--forest);
+      background: rgba(44,92,66,0.04);
+    }
+
+    /* Validation states */
+    .form-input.error { border-color: #e03131; }
+    .form-input.success { border-color: #2f9e44; }
+    .form-error-msg {
+      font-size: 0.78rem;
+      color: #e03131;
+      font-weight: 500;
+      display: none;
+    }
+    .form-error-msg.visible { display: block; }
+
+    /* Security badge */
+    .security-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(44,92,66,0.06);
+      border: 1px solid rgba(44,92,66,0.12);
+      border-radius: var(--radius-sm);
+      padding: 0.7rem 1rem;
+      font-size: 0.8rem;
+      color: var(--forest-mid);
+      font-weight: 500;
+    }
+
+    /* Dashboard preview card */
+    .dashboard-preview {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .dashboard-preview-header {
+      background: var(--forest);
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .dash-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+    }
+    .dashboard-preview-body {
+      padding: 1rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.6rem;
+    }
+    .dash-mini-stat {
+      background: var(--cream);
+      border-radius: 8px;
+      padding: 0.65rem 0.75rem;
+    }
+    .dash-mini-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+    .dash-mini-value {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--forest);
+      line-height: 1;
+    }
+    .dash-queue-bar {
+      grid-column: span 3;
+      background: var(--cream);
+      border-radius: 8px;
+      padding: 0.65rem 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .dash-queue-label { font-size: 0.72rem; color: var(--muted); font-weight: 600; white-space: nowrap; }
+    .dash-queue-track {
+      flex: 1;
+      height: 8px;
+      background: var(--cream-dark);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .dash-queue-fill {
+      height: 100%;
+      background: var(--forest-mid);
+      border-radius: 4px;
+      width: 58%;
+    }
+    .dash-queue-num { font-size: 0.82rem; font-weight: 700; color: var(--forest); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .login-page { grid-template-columns: 1fr; }
+      .login-panel-left { display: none; }
+      .login-panel-right { min-height: calc(100vh - var(--navbar-h)); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" role="navigation">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
+          <path d="M12 8v4l3 3"/>
+        </svg>
+      </div>
+      <span class="nav-logo-text">Medi<span>Queue</span></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-dropdown">
+        <button class="nav-dropdown-toggle">Browse Departments
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+       <div class="nav-dropdown-menu" role="menu">
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="human-heart.png" alt="Cardio" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>Cardiology</strong>
+              <small>Heart &amp; vascular care</small>
+            </div>
+          </a>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="brain4.png" alt="Neuro" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>Neurology</strong>
+              <small>Brain &amp; nervous system</small>
+            </div>
+          </a>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="bone.png" alt="Ortho" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>Orthopaedics</strong>
+              <small>Bones, joints &amp; spine</small>
+            </div>
+          </a>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="shampoo.png" alt="General" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>General OPD</strong>
+              <small>General consultations</small>
+            </div>
+          </a>
+
+          <div class="nav-divider"></div>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="hospital.png" alt="All" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>View All Departments</strong>
+              <small>12 departments available</small>
+            </div>
+          </a>
+        </div>
+      </li>
+      <li><a href="queue.html" class="nav-link">Live Queue</a></li>
+      <li><a href="alerts.html" class="nav-link">Alerts</a></li>
+      <li><a href="help.html" class="nav-link">Help</a></li>
+      <li><a href="doctor-login.html" class="nav-link active">Doctor Login</a></li>
+      <li><a href="queue.html"><button class="btn-book-token">Book Token</button></a></li>
+    </ul>
+    <button class="nav-mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+
+<!-- SPLIT LAYOUT -->
+<main class="login-page">
+
+  <!-- ── LEFT: Branding panel ── -->
+
+  
+<div class="login-panel-left" style="position: relative; overflow: hidden; background: var(--forest);">
+
+   <img src="mike.png" alt="" aria-hidden="true"
+         style="position: absolute; 
+                bottom: -22%;          
+                right: -50%;         
+                height: 125%;       
+                width: auto; 
+                max-width: none;    /* <--- THIS STOPS THE SQUISHING */
+                object-fit: cover;  /* <--- DOUBLE PROTECTION */
+                z-index: 1;         
+                opacity: 0.15;      
+                pointer-events: none;">
+
+    <div style="position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+
+      <div>
+        <div class="login-left-logo">
+          <div class="login-left-logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;">
+              <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
+              <path d="M12 8v4l3 3"/>
+            </svg>
+          </div>
+          <span class="login-left-logo-text">Medi<span>Queue</span></span>
+        </div>
+
+        <div class="login-left-body">
+          <div class="login-left-tag" style="margin-top: 40px;">
+            <span style="width:7px;height:7px;background:var(--gold-light);border-radius:50%;animation:pulse 2s ease-in-out infinite;display:inline-block;"></span>
+            Doctor Portal
+          </div>
+          <h2 class="login-left-title">
+            Your OPD.<br>
+            <em>Managed smarter.</em>
+          </h2>
+          <p class="login-left-desc">
+            Access your live patient queue, manage consultation flow, view daily schedules, and get real-time alerts — all in one doctor-facing dashboard.
+          </p>
+
+          <div class="dashboard-preview">
+            <div class="dashboard-preview-header">
+              <div class="dash-dot" style="background:#ef4444;"></div>
+              <div class="dash-dot" style="background:#f59e0b;"></div>
+              <div class="dash-dot" style="background:#22c55e;"></div>
+              <span style="font-size:.72rem;color:rgba(255,255,255,.55);margin-left:.5rem;font-weight:600;">Doctor Dashboard · Dr. S. Mehta</span>
+            </div>
+            <div class="dashboard-preview-body">
+              <div class="dash-mini-stat">
+                <div class="dash-mini-label">Seen Today</div>
+                <div class="dash-mini-value">14</div>
+              </div>
+              <div class="dash-mini-stat">
+                <div class="dash-mini-label">In Queue</div>
+                <div class="dash-mini-value">7</div>
+              </div>
+              <div class="dash-mini-stat">
+                <div class="dash-mini-label">Avg Wait</div>
+                <div class="dash-mini-value">~22m</div>
+              </div>
+              <div class="dash-queue-bar">
+                <div class="dash-queue-label">Session Progress</div>
+                <div class="dash-queue-track">
+                  <div class="dash-queue-fill"></div>
+                </div>
+                <div class="dash-queue-num">14/24</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="login-features">
+            <div class="login-feature-item" style="display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.5rem;">
+              <div class="login-feature-icon" style="width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <img src="website-dashboard.png" alt="Queue" style="width: 24px; height: 24px; object-fit: contain;">
+              </div>
+              <div>
+                <div style="color: #fff; font-weight: 600; font-size: 1.05rem; margin-bottom: 0.2rem;">Live Queue Management</div>
+                <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">See who's next, skip, or hold patients in real time.</div>
+              </div>
+            </div>
+
+            <div class="login-feature-item" style="display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.5rem;">
+              <div class="login-feature-icon" style="width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <img src="premium-icon.png" alt="Fast-Track" style="width: 24px; height: 24px; object-fit: contain;">
+              </div>
+              <div>
+                <div style="color: #fff; font-weight: 600; font-size: 1.05rem; margin-bottom: 0.2rem;">Fast-Track Approvals</div>
+                <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Approve or override fast-track tokens directly from your panel.</div>
+              </div>
+            </div>
+
+            <div class="login-feature-item" style="display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.5rem;">
+              <div class="login-feature-icon" style="width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <img src="bell-icon.png" alt="Alerts" style="width: 24px; height: 24px; object-fit: contain;">
+              </div>
+              <div>
+                <div style="color: #fff; font-weight: 600; font-size: 1.05rem; margin-bottom: 0.2rem;">Instant Alert Broadcasts</div>
+                <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Push delay, closure, or emergency alerts to waiting patients.</div>
+              </div>
+            </div>
+
+            <div class="login-feature-item" style="display: flex; gap: 1rem; align-items: flex-start;">
+              <div class="login-feature-icon" style="width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <img src="statistics.png" alt="Reports" style="width: 24px; height: 24px; object-fit: contain;">
+              </div>
+              <div>
+                <div style="color: #fff; font-weight: 600; font-size: 1.05rem; margin-bottom: 0.2rem;">Daily Session Reports</div>
+                <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Auto-generated daily consultation summaries and stats.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="login-left-footer">
+        🔒 Secured with TLS 1.3 encryption · HIPAA-aligned data handling · Access logs maintained
+      </div>
+
+    </div> </div>
+
+  <!-- ── RIGHT: Form panel ── -->
+  <div class="login-panel-right">
+    <div class="login-form-wrap">
+
+      <div class="login-form-header">
+        <div class="login-form-eyebrow">Medical Staff Portal</div>
+        <h1 class="login-form-title">Welcome back,<br>Doctor.</h1>
+        <p class="login-form-sub">Sign in with your MediQueue credentials to access your queue dashboard.</p>
+      </div>
+
+      <!-- Demo notice -->
+      <div class="security-badge" style="margin-bottom:1.5rem;background:rgba(201,168,76,0.08);border-color:rgba(201,168,76,0.25);color:#9a7a28;">
+        <span>ℹ️</span>
+        <span>Demo mode — use <strong>doctor@mediqueue.in</strong> / <strong>password123</strong> to sign in.</span>
+      </div>
+
+      <form class="login-form" id="loginForm" onsubmit="handleLogin(event)" novalidate>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label class="form-label" for="docEmail">Email Address</label>
+          <div class="form-input-wrap">
+            <span class="form-input-icon">✉️</span>
+            <input
+              type="email"
+              id="docEmail"
+              class="form-input"
+              placeholder="doctor@mediqueue.in"
+              autocomplete="username"
+              required
+            />
+          </div>
+          <div class="form-error-msg" id="emailError">Please enter a valid email address.</div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label" for="docPassword">Password</label>
+          <div class="form-input-wrap">
+            <span class="form-input-icon">🔑</span>
+            <input
+              type="password"
+              id="docPassword"
+              class="form-input"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+            />
+            <button type="button" class="form-input-toggle" id="pwToggle" onclick="togglePassword()" title="Show/hide password">👁️</button>
+          </div>
+          <div class="form-error-msg" id="pwError">Password must be at least 6 characters.</div>
+        </div>
+
+        <!-- Dept select -->
+        <div class="form-group">
+          <label class="form-label" for="docDept">Your Department</label>
+          <div class="form-input-wrap">
+            <span class="form-input-icon">🏥</span>
+            <select
+              id="docDept"
+              class="form-input"
+              style="padding-left:2.65rem;cursor:pointer;"
+              required
+            >
+              <option value="">Select your department…</option>
+              <option>General OPD</option>
+              <option>Cardiology</option>
+              <option>Neurology</option>
+              <option>Orthopaedics</option>
+              <option>Ophthalmology</option>
+              <option>Dermatology</option>
+              <option>Gynaecology</option>
+              <option>Paediatrics</option>
+              <option>ENT</option>
+              <option>Psychiatry</option>
+              <option>Dental</option>
+              <option>Radiology</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Remember + forgot -->
+        <div class="form-row">
+          <label class="form-checkbox-label">
+            <input type="checkbox" id="rememberMe" />
+            Remember me for 30 days
+          </label>
+          <a href="#" class="form-forgot" onclick="showForgotToast(event)">Forgot password?</a>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="login-btn" id="loginBtn">
+          <span id="loginBtnText">Sign In to Dashboard</span>
+          <span id="loginBtnIcon">→</span>
+        </button>
+
+        <!-- Divider -->
+        <div class="login-divider">or sign in with</div>
+
+        <!-- Alt login -->
+        <div class="login-alt-options">
+          <button type="button" class="login-alt-btn" onclick="showToast('Smart Card Login', 'Please tap your hospital smart card to continue.', '💳')">
+            💳 Smart Card
+          </button>
+          <button type="button" class="login-alt-btn" onclick="showToast('OTP Login', 'OTP sent to your registered mobile number.', '📱')">
+            📱 OTP Login
+          </button>
+        </div>
+
+      </form>
+
+      <!-- Security footer -->
+      <div class="security-badge" style="margin-top:1.75rem;">
+        <span>🔒</span>
+        <span>All sessions are encrypted and access-logged per hospital security policy.</span>
+      </div>
+
+      <div style="text-align:center;margin-top:1.25rem;font-size:.82rem;color:var(--muted);">
+        Not a registered doctor?
+        <a href="help.html" style="color:var(--forest-mid);font-weight:600;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Contact the Help Desk</a>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+
+<!-- Dashboard overlay (shown after login) -->
+<div id="dashboardModal" style="
+  display:none;
+  position:fixed;inset:0;z-index:2000;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(4px);
+  align-items:center;justify-content:center;
+" onclick="if(event.target===this)this.style.display='none'">
+  <div style="
+    background:#fff;border-radius:var(--radius-lg);
+    padding:2.5rem;max-width:560px;width:90%;
+    box-shadow:var(--shadow-lg);
+    animation: modalIn .3s ease;
+  ">
+    <div style="text-align:center;margin-bottom:1.75rem;">
+      <div style="font-size:3rem;margin-bottom:.75rem;">✅</div>
+      <h2 style="font-family:var(--font-serif);font-size:1.75rem;font-weight:700;color:var(--forest);letter-spacing:-.02em;margin-bottom:.5rem;">Signed In Successfully</h2>
+      <p id="welcomeMsg" style="font-size:.95rem;color:var(--muted);">Redirecting to your doctor dashboard…</p>
+    </div>
+
+    <!-- Mock dashboard stats -->
+    <div style="background:var(--cream);border-radius:var(--radius-md);padding:1.25rem;margin-bottom:1.5rem;">
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;">Today's Session Overview</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;">
+        <div style="text-align:center;">
+          <div style="font-family:var(--font-serif);font-size:1.75rem;font-weight:700;color:var(--forest);" id="dashPatients">14</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:.2rem;">Patients Seen</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:var(--font-serif);font-size:1.75rem;font-weight:700;color:var(--forest);" id="dashQueue">7</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:.2rem;">In Queue</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:var(--font-serif);font-size:1.75rem;font-weight:700;color:var(--gold);" id="dashWait">~22m</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:.2rem;">Avg Wait</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Next patients list -->
+    <div style="margin-bottom:1.75rem;">
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;">Next Patients</div>
+      <div style="display:flex;flex-direction:column;gap:.5rem;" id="nextPatientsList"></div>
+    </div>
+
+    <div style="display:flex;gap:.75rem;">
+      <button onclick="document.getElementById('dashboardModal').style.display='none'" class="btn btn-secondary" style="flex:1;justify-content:center;">
+        Close Preview
+      </button>
+      <button onclick="showToast('Dashboard Loading', 'Full doctor dashboard coming soon!', '🩺');document.getElementById('dashboardModal').style.display='none';" class="btn btn-primary" style="flex:1;justify-content:center;">
+        Open Full Dashboard →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div id="toast-container" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.6rem;"></div>
+
+<script src="app.js"></script>
+<script>
+  /* ── Password toggle ── */
+  function togglePassword() {
+    const input = document.getElementById('docPassword');
+    const btn   = document.getElementById('pwToggle');
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.textContent = '🙈';
+    } else {
+      input.type = 'password';
+      btn.textContent = '👁️';
+    }
+  }
+
+  /* ── Forgot password ── */
+  function showForgotToast(e) {
+    e.preventDefault();
+    showToast('Password Reset', 'A reset link will be sent to your registered email.', '📧');
+  }
+
+  /* ── Login handler ── */
+  function handleLogin(e) {
+    e.preventDefault();
+
+    const email    = document.getElementById('docEmail').value.trim();
+    const password = document.getElementById('docPassword').value;
+    const dept     = document.getElementById('docDept').value;
+
+    let valid = true;
+
+    // Validate email
+    const emailEl  = document.getElementById('docEmail');
+    const emailErr = document.getElementById('emailError');
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      emailEl.classList.add('error');
+      emailErr.classList.add('visible');
+      valid = false;
+    } else {
+      emailEl.classList.remove('error');
+      emailErr.classList.remove('visible');
+    }
+
+    // Validate password
+    const pwEl  = document.getElementById('docPassword');
+    const pwErr = document.getElementById('pwError');
+    if (!password || password.length < 6) {
+      pwEl.classList.add('error');
+      pwErr.classList.add('visible');
+      valid = false;
+    } else {
+      pwEl.classList.remove('error');
+      pwErr.classList.remove('visible');
+    }
+
+    if (!valid) return;
+
+    // Check demo credentials
+    const DEMO_EMAIL = 'doctor@mediqueue.in';
+    const DEMO_PW    = 'password123';
+
+    if (email !== DEMO_EMAIL || password !== DEMO_PW) {
+      emailEl.classList.add('error');
+      pwEl.classList.add('error');
+      emailErr.textContent = 'Invalid credentials. Use demo credentials shown above.';
+      emailErr.classList.add('visible');
+      showToast('Login Failed', 'Use the demo credentials shown above.', '❌');
+      return;
+    }
+
+    // Animate button
+    const btn  = document.getElementById('loginBtn');
+    const text = document.getElementById('loginBtnText');
+    const icon = document.getElementById('loginBtnIcon');
+    btn.classList.add('loading');
+    text.textContent = 'Signing in…';
+    icon.textContent = '⌛';
+
+    setTimeout(() => {
+      btn.classList.remove('loading');
+      text.textContent = 'Sign In to Dashboard';
+      icon.textContent = '→';
+
+      // Populate dashboard modal
+      const deptData  = dept ? MQ.departments.find(d => d.name === dept) : MQ.departments[0];
+      const activeDept = deptData || MQ.departments[0];
+
+      document.getElementById('dashPatients').textContent = activeDept.serving;
+      document.getElementById('dashQueue').textContent    = activeDept.queue;
+      document.getElementById('dashWait').textContent     = activeDept.waitMin > 0 ? `~${activeDept.waitMin}m` : 'Now';
+      document.getElementById('welcomeMsg').textContent   = `Welcome back, ${activeDept.doctor}. Here's your current session.`;
+
+      // Build next patients list
+      const list = document.getElementById('nextPatientsList');
+      const tokenStart = activeDept.serving + 1;
+      list.innerHTML = [0,1,2].map(i => {
+        const tokenNum  = tokenStart + i;
+        const waitEst   = (i + 1) * Math.max(3, Math.round(activeDept.waitMin / Math.max(1, activeDept.queue)));
+        const isNext    = i === 0;
+        return `
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem .9rem;background:${isNext ? 'rgba(44,92,66,0.06)' : '#fff'};border:1px solid ${isNext ? 'rgba(44,92,66,0.15)' : 'var(--border)'};border-radius:var(--radius-sm);">
+            <div style="display:flex;align-items:center;gap:.75rem;">
+              <div style="width:32px;height:32px;background:${isNext ? 'var(--forest)' : 'var(--cream)'};border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:.85rem;font-weight:700;color:${isNext ? '#fff' : 'var(--forest)'};">#${tokenNum}</div>
+              <div>
+                <div style="font-size:.85rem;font-weight:600;color:var(--charcoal);">Patient ${tokenNum}</div>
+                <div style="font-size:.75rem;color:var(--muted);">${activeDept.name}</div>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              ${isNext
+                ? '<span style="font-size:.78rem;font-weight:700;color:var(--forest-mid);background:rgba(44,92,66,0.1);padding:.2rem .6rem;border-radius:100px;">Up Next</span>'
+                : `<span style="font-size:.78rem;color:var(--muted);">~${waitEst} min</span>`
+              }
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Show modal
+      const modal = document.getElementById('dashboardModal');
+      modal.style.display = 'flex';
+
+      showToast('Welcome back!', `${activeDept.doctor} — ${activeDept.name}`, '🩺');
+    }, 1400);
+  }
+
+  /* ── Mobile nav ── */
+  document.getElementById('mobileToggle').addEventListener('click', function() {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+
+  /* ── Modal keyboard close ── */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.getElementById('dashboardModal').style.display = 'none';
+  });
+</script>
+</body>
+</html>

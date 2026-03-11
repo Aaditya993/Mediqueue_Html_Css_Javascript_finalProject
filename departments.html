@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Departments & Pricing — MediQueue</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── Departments page specific ── */
+    .dept-hero {
+      background: var(--cream);
+      padding: 4rem 0 3.5rem;
+    }
+    .dept-hero-inner {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .dept-hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      color: var(--forest);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+    .dept-hero-sub {
+      font-size: 1rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+      max-width: 480px;
+    }
+    .dept-hero-search {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.1rem 0.1rem 0.1rem 1rem;
+      box-shadow: var(--shadow-sm);
+      gap: 0.5rem;
+      min-width: 300px;
+    }
+    .dept-hero-search input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      color: var(--charcoal);
+      background: transparent;
+    }
+    .dept-hero-search button {
+      background: var(--forest);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.55rem 1.2rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .dept-hero-search button:hover { background: var(--forest-mid); }
+
+    /* ── Main layout ── */
+    .depts-main {
+      background: var(--ivory);
+      padding: 3rem 0 5rem;
+    }
+    .depts-page-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    /* ── Sidebar filters ── */
+    .dept-filter-sidebar {
+      position: sticky;
+      top: calc(var(--navbar-h) + 1rem);
+    }
+    .dept-filter-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .dept-filter-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .dept-filter-list { padding: 0.6rem; }
+    .dept-filter-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.55rem 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.87rem;
+      color: var(--charcoal-mid);
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition);
+    }
+    .dept-filter-item:hover { background: var(--cream); color: var(--forest); }
+    .dept-filter-item.active { background: rgba(44,92,66,0.1); color: var(--forest); font-weight: 600; }
+    .dept-filter-count {
+      font-size: 0.72rem;
+      background: var(--cream-dark);
+      color: var(--muted);
+      border-radius: 100px;
+      padding: 0.1rem 0.5rem;
+      font-weight: 600;
+    }
+    .dept-filter-item.active .dept-filter-count {
+      background: var(--forest);
+      color: #fff;
+    }
+
+    /* ── Department cards ── */
+    .depts-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    .dept-full-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: box-shadow var(--transition), transform var(--transition);
+    }
+    .dept-full-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .dept-full-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .dept-full-icon-name {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .dept-full-icon {
+      /* Increased size from 56px to 72px */
+      width: 72px; height: 72px; 
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .dept-full-name {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--forest);
+    }
+    .dept-full-spec {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+    .dept-full-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .dept-full-stat-col {
+      padding: 1.25rem 1.5rem;
+      border-right: 1px solid var(--border);
+    }
+    .dept-full-stat-col:last-child { border-right: none; }
+    .dept-full-stat-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+    .dept-full-stat-val {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--forest);
+    }
+    .dept-full-stat-sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+
+    /* Doctor info */
+    .dept-doctor-section {
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .dept-doctor-avatar {
+      /* Increased size from 48px to 56px */
+      width: 56px; height: 56px; 
+      border-radius: 50%;
+      overflow: hidden; /* This makes sure the square PNG is cropped into a perfect circle! */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: var(--cream);
+      border: 2px solid var(--border); /* Adds a premium subtle border around the photo */
+    }
+    .dept-doctor-name { font-size: 0.95rem; font-weight: 700; color: var(--charcoal); }
+    .dept-doctor-role { font-size: 0.78rem; color: var(--muted); margin-top: 0.15rem; }
+    .dept-doctor-room {
+      margin-left: auto;
+      font-size: 0.78rem;
+      background: var(--cream);
+      padding: 0.35rem 0.85rem;
+      border-radius: 100px;
+      color: var(--forest);
+      font-weight: 600;
+    }
+
+    /* Pricing section */
+    .dept-pricing-section {
+      padding: 1.25rem 1.5rem;
+      background: var(--cream);
+    }
+    .dept-pricing-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.85rem;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+    .pricing-item {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+    }
+    .pricing-item-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+    }
+    .pricing-item-price {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--forest);
+    }
+    .pricing-item-sub {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+    }
+    .pricing-item.featured {
+      background: var(--forest);
+      border-color: var(--forest);
+    }
+    .pricing-item.featured .pricing-item-label { color: rgba(255,255,255,0.55); }
+    .pricing-item.featured .pricing-item-price { color: var(--gold-light); }
+    .pricing-item.featured .pricing-item-sub   { color: rgba(255,255,255,0.45); }
+
+    /* Footer actions */
+    .dept-card-actions {
+      padding: 1.1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    /* ── Pricing Bundles Section ── */
+    .bundles-section {
+      background: var(--cream);
+      padding: 5rem 0;
+    }
+    .bundles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+    .bundle-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: box-shadow var(--transition), transform var(--transition);
+    }
+    .bundle-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-4px);
+    }
+    .bundle-card.featured-bundle {
+      background: var(--forest);
+      border-color: var(--forest);
+    }
+    .bundle-header {
+      padding: 1.75rem 1.75rem 1.25rem;
+    }
+    .bundle-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.75rem;
+      border-radius: 100px;
+      display: inline-block;
+      margin-bottom: 1rem;
+      background: rgba(44,92,66,0.1);
+      color: var(--forest-mid);
+    }
+    .featured-bundle .bundle-tag {
+      background: rgba(201,168,76,0.2);
+      color: var(--gold-light);
+    }
+    .bundle-name {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--forest);
+      line-height: 1.2;
+    }
+    .featured-bundle .bundle-name { color: #fff; }
+    .bundle-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+    }
+    .featured-bundle .bundle-desc { color: rgba(255,255,255,0.6); }
+    .bundle-price-wrap { margin-top: 1.25rem; }
+    .bundle-price {
+      font-family: var(--font-serif);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--forest);
+      line-height: 1;
+    }
+    .featured-bundle .bundle-price { color: var(--gold-light); }
+    .bundle-price-period { font-size: 0.85rem; color: var(--muted); font-family: var(--font-sans); }
+    .featured-bundle .bundle-price-period { color: rgba(255,255,255,0.5); }
+    .bundle-divider { height: 1px; background: var(--border); margin: 0 1.75rem; }
+    .featured-bundle .bundle-divider { background: rgba(255,255,255,0.15); }
+    .bundle-features {
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .bundle-feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      font-size: 0.875rem;
+      color: var(--charcoal-mid);
+    }
+    .featured-bundle .bundle-feature-item { color: rgba(255,255,255,0.8); }
+    .bundle-feature-check {
+      width: 18px; height: 18px;
+      background: rgba(44,92,66,0.12);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+      color: var(--forest-mid);
+      font-weight: 700;
+    }
+    .featured-bundle .bundle-feature-check {
+      background: rgba(201,168,76,0.2);
+      color: var(--gold-light);
+    }
+    .bundle-footer {
+      padding: 0.5rem 1.75rem 1.75rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .depts-page-layout { grid-template-columns: 1fr; }
+      .dept-filter-sidebar { position: static; }
+      .dept-full-body { grid-template-columns: 1fr 1fr; }
+      .pricing-grid  { grid-template-columns: 1fr 1fr; }
+      .bundles-grid  { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .dept-full-body { grid-template-columns: 1fr; }
+      .dept-full-stat-col { border-right: none; border-bottom: 1px solid var(--border); }
+      .pricing-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" role="navigation">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
+          <path d="M12 8v4l3 3"/>
+        </svg>
+      </div>
+      <span class="nav-logo-text">Medi<span>Queue</span></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-dropdown">
+        <button class="nav-dropdown-toggle">Browse Departments
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu" role="menu">
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="human-heart.png" alt="Cardio" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>Cardiology</strong>
+              <small>Heart &amp; vascular care</small>
+            </div>
+          </a>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="brain4.png" alt="Neuro" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>Neurology</strong>
+              <small>Brain &amp; nervous system</small>
+            </div>
+          </a>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="bone.png" alt="Ortho" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>Orthopaedics</strong>
+              <small>Bones, joints &amp; spine</small>
+            </div>
+          </a>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="shampoo.png" alt="General" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>General OPD</strong>
+              <small>General consultations</small>
+            </div>
+          </a>
+
+          <div class="nav-divider"></div>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="hospital.png" alt="All" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>View All Departments</strong>
+              <small>12 departments available</small>
+            </div>
+          </a>
+        </div>
+      </li>
+      <li><a href="queue.html" class="nav-link">Live Queue</a></li>
+      <li><a href="alerts.html" class="nav-link">Alerts</a></li>
+      <li><a href="help.html" class="nav-link">Help</a></li>
+      <li><a href="doctor-login.html" class="nav-link">Doctor Login</a></li>
+      <li><button class="btn-book-token" onclick="openDeptBooking()">Book Token</button></li>
+    </ul>
+    <button class="nav-mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+
+<!-- HERO -->
+<section class="dept-hero" style="position: relative; overflow: hidden;">
+  
+  <img src="doctor_nepali.png" alt="" aria-hidden="true"
+       style="position: absolute; 
+              bottom: -75%;         /* Anchored to the bottom edge */
+              right: 34%;         /* Pushed over to the right side */
+              height: 190%;      /* Taller than the section for a grand look */
+              width: auto; 
+              z-index: 1;        /* Sits behind the text and search bar */
+              pointer-events: none; /* Clicks pass right through it */
+              opacity: 0.95;">
+
+  <div class="container" style="position: relative; z-index: 2;">
+    <div class="dept-hero-inner">
+      <div>
+        <div class="section-label">12 Departments</div>
+        <h1 class="dept-hero-title">OPD Departments<br>&amp; Consultation Fees</h1>
+        <p class="dept-hero-sub">Browse all active departments, check real-time doctor availability, and view transparent consultation pricing.</p>
+      </div>
+      <div class="dept-hero-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" id="deptSearch" placeholder="Search departments…" oninput="filterDepts(this.value)" />
+        <button>Search</button>
+      </div>
+    </div>
+  </div>
+  
+</section>
+
+
+<!-- MAIN -->
+<section class="depts-main" style="background: var(--forest);">
+  <div class="container">
+    <div class="depts-page-layout">
+
+      <div class="dept-filter-sidebar">
+        <div class="dept-filter-card">
+          <div class="dept-filter-header">Filter by Status</div>
+          <div class="dept-filter-list">
+            <div class="dept-filter-item active" onclick="applyFilter('all', this)">
+              All Departments <span class="dept-filter-count">12</span>
+            </div>
+            <div class="dept-filter-item" onclick="applyFilter('open', this)">
+              Open Now <span class="dept-filter-count" id="openCount">10</span>
+            </div>
+            <div class="dept-filter-item" onclick="applyFilter('closed', this)">
+              Closed <span class="dept-filter-count">2</span>
+            </div>
+          </div>
+          <div class="dept-filter-header" style="border-top:1px solid var(--border);">Wait Time</div>
+          <div class="dept-filter-list">
+            <div class="dept-filter-item" onclick="applyFilter('short', this)">
+              Short (&lt;15 min) <span class="dept-filter-count" id="shortCount">—</span>
+            </div>
+            <div class="dept-filter-item" onclick="applyFilter('moderate', this)">
+              Moderate (15–30 min) <span class="dept-filter-count" id="modCount">—</span>
+            </div>
+            <div class="dept-filter-item" onclick="applyFilter('long', this)">
+              Long (&gt;30 min) <span class="dept-filter-count" id="longCount">—</span>
+            </div>
+          </div>
+          <div class="dept-filter-header" style="border-top:1px solid var(--border);">Fast-Track</div>
+          <div class="dept-filter-list">
+            <div class="dept-filter-item" onclick="applyFilter('fasttrack', this)">
+              Fast-Track Available <span class="dept-filter-count">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem;">
+          
+          <div id="deptResultLabel" style="font-size:.85rem;color:rgba(255,255,255,0.85);font-weight:500;">
+            Showing all 12 departments
+          </div>
+          
+          <div style="display:flex;gap:.5rem;">
+            <select id="deptSort" onchange="sortDepts(this.value)"
+              style="padding:.45rem .85rem;border:1px solid rgba(255,255,255,0.2);border-radius:var(--radius-sm);font-size:.82rem;font-family:var(--font-sans);background:rgba(255,255,255,0.1);color:#fff;outline:none;cursor:pointer;">
+              <option value="name" style="color: #000;">Sort: Name A–Z</option>
+              <option value="queue" style="color: #000;">Sort: Queue (Low–High)</option>
+              <option value="wait" style="color: #000;">Sort: Wait Time</option>
+              <option value="fee" style="color: #000;">Sort: Fee (Low–High)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="depts-list" id="deptsList">
+          </div>
+      </div>
+      
+    </div>
+  </div>
+</section>
+        <div class="depts-list" id="deptsList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- PRICING BUNDLES SECTION -->
+<section class="bundles-section">
+  <div class="container">
+    <div style="text-align:center;max-width:580px;margin:0 auto 0.5rem;">
+      <div class="section-label">Smart Savings</div>
+      <h2 class="section-title">Lab Test &amp; Consultation Bundles</h2>
+      <p class="section-subtitle">Combine consultations with lab investigations at a reduced rate. Transparent, no hidden charges.</p>
+    </div>
+
+    <div class="bundles-grid">
+
+      <!-- Basic Bundle -->
+      <div class="bundle-card">
+        <div class="bundle-header">
+          <div class="bundle-tag">Basic</div>
+          <div class="bundle-name">General Wellness Check</div>
+          <div class="bundle-desc">Perfect for routine check-ups and basic diagnostics.</div>
+          <div class="bundle-price-wrap">
+            <div>
+              <span class="bundle-price">₹599</span>
+              <span class="bundle-price-period"> / visit</span>
+            </div>
+            <div style="font-size:.78rem;color:var(--muted);margin-top:.3rem;">Save ₹150 vs. individual</div>
+          </div>
+        </div>
+        <div class="bundle-divider"></div>
+        <div class="bundle-features">
+          <div class="bundle-feature-item"><div class="bundle-feature-check">✓</div><span>General OPD Consultation</span></div>
+          <div class="bundle-feature-item"><div class="bundle-feature-check">✓</div><span>CBC (Complete Blood Count)</span></div>
+          <div class="bundle-feature-item"><div class="bundle-feature-check">✓</div><span>Blood Sugar (Fasting + PP)</span></div>
+          <div class="bundle-feature-item"><div class="bundle-feature-check">✓</div><span>Urine Routine &amp; Microscopy</span></div>
+          <div class="bundle-feature-item"><div class="bundle-feature-check">✓</div><span>Digital Token Priority</span></div>
+        </div>
+        <div class="bundle-footer">
+          <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="openDeptBooking()">
+            Book This Bundle
+          </button>
+        </div>
+      </div>
+
+      <!-- Featured: Comprehensive Bundle -->
+      <div class="bundle-card featured-bundle">
+        <div class="bundle-header">
+          <div class="bundle-tag">⭐ Most Popular</div>
+          <div class="bundle-name">Comprehensive Health Screening</div>
+          <div class="bundle-desc">Full diagnostics with specialist consultation included.</div>
+          <div class="bundle-price-wrap">
+            <div>
+              <span class="bundle-price">₹1,499</span>
+              <span class="bundle-price-period"> / visit</span>
+            </div>
+            <div style="font-size:.78rem;color:rgba(255,255,255,0.4);margin-top:.3rem;">Save ₹450 vs. individual</div>
+          </div>
+        </div>
+        <div class="bundle-divider"></div>
+        <div class="bundle-features">
+          <div class="bundle-feature-item"><div class="bundle-feature-check">✓</div><span>Specialist Consultation (Any Dept)</span></div>
+          <div class="bundle-feature-item"><div class="bundle-feature-check">✓</div><span>Full Lipid Profile</span></div>
+          <div class="bundle-feature-item"><div class="bundle-feature-check">✓</div><span>Thyroid Function Test (T3, T4, TSH)</span></div>
+          <div class="bundle-feature-item"><div class="bundle-feature-check">✓</div><span>Liver &amp; Kidney Function Tests</span></div>
+          <div class="bundle-feature-item"><div class="bundle-feature-check">✓</div><span>Chest X-Ray (PA View)</span></div>
+          <div class="bundle-feature-item"><div class="bundle-feature-check">✓</div><span>ECG</span></div>
+          <div class="bundle-feature-item"><div class="bundle-feature-check">✓</div><span>⚡ Fast-Track Priority Token</span></div>
+        </div>
+        <div class="bundle-footer">
+          <button class="btn btn-gold" style="width:100%;justify-content:center;" onclick="openDeptBooking()">
+            Book This Bundle
+          </button>
+        </div>
+      </div>
+
+      <!-- Cardiac Bundle -->
+      <div class="bundle-card">
+        <div class="bundle-header">
+          <div class="bundle-tag">Specialised</div>
+          <div class="bundle-name">Cardiac Risk Assessment</div>
+          <div class="bundle-desc">Targeted heart health evaluation with cardiologist consultation.</div>
+          <div class="bundle-price-wrap">
+            <div>
+              <span class="bundle-price">₹2,199</span>
+              <span class="bundle-price-period"> / visit</span>
+            </div>
+            <div style="font-size:.78rem;color:var(--muted);margin-top:.3rem;">Save ₹700 vs. individual</div>
+          </div>
+        </div>
+        <div class="bundle-divider"></div>
+        <div class="bundle-features">
+          <div class="bundle-feature-item"><div class="bundle-feature-check">✓</div><span>Cardiology Consultation</span></div>
+          <div class="bundle-feature-item"><div class="bundle-feature-check">✓</div><span>2D Echo (Echocardiogram)</span></div>
+          <div class="bundle-feature-item"><div class="bundle-feature-check">✓</div><span>Stress Test / TMT</span></div>
+          <div class="bundle-feature-item"><div class="bundle-feature-check">✓</div><span>Holter Monitoring (24h)</span></div>
+          <div class="bundle-feature-item"><div class="bundle-feature-check">✓</div><span>Cardiac Risk Markers Panel</span></div>
+          <div class="bundle-feature-item"><div class="bundle-feature-check">✓</div><span>⚡ Fast-Track Priority Token</span></div>
+        </div>
+        <div class="bundle-footer">
+          <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="openDeptBooking()">
+            Book This Bundle
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- Booking modal (dept page) -->
+<div class="modal-overlay" id="deptBookingModal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <div class="modal-header" style="position:relative;">
+      <div class="modal-header-icon">🎫</div>
+      <div>
+        <div class="modal-header-title">Book OPD Token</div>
+        <div class="modal-header-sub">Select department &amp; get your token</div>
+      </div>
+      <button class="modal-close" onclick="closeDeptBooking()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="deptBookingForm" onsubmit="submitDeptBooking(event)">
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--charcoal-mid);display:block;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase;">Full Name</label>
+            <input type="text" id="dbPatientName" placeholder="Your full name" required
+              style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.95rem;font-family:var(--font-sans);background:var(--ivory);color:var(--charcoal);outline:none;"
+              onfocus="this.style.borderColor='var(--forest-mid)'" onblur="this.style.borderColor='var(--border)'" />
+          </div>
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--charcoal-mid);display:block;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase;">Department</label>
+            <select id="dbDeptSelect" required
+              style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.95rem;font-family:var(--font-sans);background:var(--ivory);color:var(--charcoal);outline:none;cursor:pointer;"
+              onfocus="this.style.borderColor='var(--forest-mid)'" onblur="this.style.borderColor='var(--border)'">
+              <option value="">Select a department…</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.5rem;">
+          <button type="button" class="btn btn-secondary" onclick="closeDeptBooking()">Cancel</button>
+          <button type="submit" class="btn btn-gold">Get Token →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Token result modal -->
+<div class="modal-overlay" id="deptTokenModal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <div class="modal-header" style="background:var(--forest-mid);position:relative;">
+      <div class="modal-header-icon">✅</div>
+      <div>
+        <div class="modal-header-title">Token Confirmed!</div>
+        <div class="modal-header-sub">Your queue position is secured</div>
+      </div>
+      <button class="modal-close" onclick="closeDeptTokenModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" id="deptTokenDetails" style="text-align:center;padding:2rem;"></div>
+    <div class="modal-footer">
+      <a href="queue.html" class="btn btn-primary">Track Queue →</a>
+      <button class="btn btn-secondary" onclick="closeDeptTokenModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+<footer class="footer-new" id="footer">
+
+  <div class="footer-wave-wrap" aria-hidden="true" style="background: transparent;">
+    <svg class="footer-wave-svg" viewBox="0 0 1440 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,40 C180,90 360,10 540,55 C720,100 900,20 1080,60 C1260,100 1360,30 1440,50 L1440,110 L0,110 Z"
+            fill="#2c5c42" opacity="0.45"/>
+      <path d="M0,60 C200,10 400,90 600,45 C800,0 1000,80 1200,40 C1320,18 1390,65 1440,55 L1440,110 L0,110 Z"
+            fill="#1a3a2a" opacity="0.7"/>
+      <path d="M0,75 C240,30 480,100 720,60 C960,20 1200,85 1440,50 L1440,110 L0,110 Z"
+            fill="#0f2318"/>
+    </svg>
+  </div>
+
+  <div class="footer-new-body">
+
+    <div class="ft-top">
+      <div class="ft-brand">
+        <a href="index.html" class="ft-logo-link" aria-label="MediQueue home">
+          <div class="ft-logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
+              <path d="M12 8v4l3 3"/>
+            </svg>
+          </div>
+          <span class="ft-logo-text">Medi<em>Queue</em>®</span>
+        </a>
+      </div>
+
+      <nav class="ft-nav" aria-label="Footer links">
+        <span class="ft-nav-bracket">[</span>
+        <div class="ft-nav-links">
+          <a href="index.html">HOME</a>
+          <a href="departments.html">DEPARTMENTS</a>
+          <a href="queue.html">LIVE QUEUE</a>
+          <a href="alerts.html">ALERTS</a>
+          <a href="help.html">HELP</a>
+          <a href="doctor-login.html">DOCTOR LOGIN</a>
+        </div>
+        <span class="ft-nav-bracket">]</span>
+      </nav>
+
+      <div class="ft-newsletter">
+        <div class="ft-newsletter-heading">
+          <span>SIGN UP</span>
+          <span>TO OUR</span>
+          <span class="ft-nl-accent">NEWSLETTER</span>
+        </div>
+        <form class="ft-nl-form" onsubmit="handleNewsletterSubmit(event)">
+          <input type="email" class="ft-nl-input" placeholder="YOUR EMAIL" aria-label="Email address" required />
+          <button type="submit" class="ft-nl-btn" aria-label="Subscribe">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="ft-giant-wrap" aria-hidden="true">
+      <span class="ft-giant-text">MediQueue</span>
+    </div>
+
+    <div class="ft-bottom">
+      <div class="ft-bottom-copy">
+        <span>© MEDIQUEUE / 2026</span>
+        <span>COLLEGE FINAL YEAR PROJECT</span>
+      </div>
+      <div class="ft-bottom-legal">
+        <a href="#">PRIVACY POLICY</a>
+        <a href="#">TERMS OF USE</a>
+        <a href="#">ACCESSIBILITY</a>
+        <a href="#">HELP CENTRE</a>
+      </div>
+      <div class="ft-bottom-right">
+        <div class="ft-socials">
+          <a href="#" class="ft-social-link">INSTAGRAM</a>
+          <a href="#" class="ft-social-link">LINKEDIN</a>
+        </div>
+        <a href="mailto:support@mediqueue.in" class="ft-email">SUPPORT@MEDIQUEUE.IN</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+<script>
+function handleNewsletterSubmit(e) {
+  e.preventDefault();
+  const input = e.target.querySelector('.ft-nl-input');
+  if (typeof showToast === 'function') {
+    showToast('Subscribed!', `${input.value} added to newsletter.`, '✉️');
+  } else {
+    alert(`Subscribed! ${input.value} added to newsletter.`);
+  }
+  input.value = '';
+}
+</script>
+
+<div id="toast-container"></div>
+
+<script src="app.js"></script>
+<script>
+  let currentDeptFilter = 'all';
+  let currentSearch     = '';
+  let currentSort       = 'name';
+
+  /* ── Populate booking dropdown ── */
+  /* ── Populate booking dropdown ── */
+  function populateBookingDept() {
+    const sel = document.getElementById('dbDeptSelect');
+    if (!sel) return;
+    MQ.departments.filter(d => d.status === 'open').forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d.name;
+      // FIX: Clean text only for the dropdown
+      opt.textContent = d.name; 
+      sel.appendChild(opt);
+    });
+  }
+  /* ── Filter sidebar counts ── */
+  function updateFilterCounts() {
+    const open  = MQ.departments.filter(d => d.status === 'open');
+    document.getElementById('openCount').textContent  = open.length;
+    document.getElementById('shortCount').textContent = open.filter(d => d.waitMin < 15).length;
+    document.getElementById('modCount').textContent   = open.filter(d => d.waitMin >= 15 && d.waitMin <= 30).length;
+    document.getElementById('longCount').textContent  = open.filter(d => d.waitMin > 30).length;
+  }
+
+  /* ── Render department cards ── */
+  function renderDeptsList() {
+    let depts = [...MQ.departments];
+
+    // Search filter
+    if (currentSearch) {
+      const q = currentSearch.toLowerCase();
+      depts = depts.filter(d =>
+        d.name.toLowerCase().includes(q) ||
+        d.specialisation.toLowerCase().includes(q) ||
+        d.doctor.toLowerCase().includes(q)
+      );
+    }
+
+    // Status filter
+    if (currentDeptFilter === 'open')      depts = depts.filter(d => d.status === 'open');
+    if (currentDeptFilter === 'closed')    depts = depts.filter(d => d.status !== 'open');
+    if (currentDeptFilter === 'short')     depts = depts.filter(d => d.status === 'open' && d.waitMin < 15);
+    if (currentDeptFilter === 'moderate')  depts = depts.filter(d => d.status === 'open' && d.waitMin >= 15 && d.waitMin <= 30);
+    if (currentDeptFilter === 'long')      depts = depts.filter(d => d.status === 'open' && d.waitMin > 30);
+    if (currentDeptFilter === 'fasttrack') depts = depts.filter(d => d.status === 'open' && d.queue < 10);
+
+    // Sort
+    if (currentSort === 'name')  depts.sort((a,b) => a.name.localeCompare(b.name));
+    if (currentSort === 'queue') depts.sort((a,b) => a.queue - b.queue);
+    if (currentSort === 'wait')  depts.sort((a,b) => a.waitMin - b.waitMin);
+    if (currentSort === 'fee')   depts.sort((a,b) => a.fee - b.fee);
+
+    document.getElementById('deptResultLabel').textContent =
+      `Showing ${depts.length} department${depts.length !== 1 ? 's' : ''}`;
+
+    const list = document.getElementById('deptsList');
+    if (!list) return;
+
+    if (depts.length === 0) {
+      list.innerHTML = `<div style="text-align:center;padding:3rem;color:rgba(255,255,255,0.7);">
+        <div style="font-size:2.5rem;margin-bottom:.75rem;">🔍</div>
+        <div style="font-size:1rem;font-weight:600;color:#fff;">No departments match your search.</div>
+        <div style="font-size:.875rem;margin-top:.4rem;">Try adjusting your filters.</div>
+      </div>`;
+      return;
+    }
+    list.innerHTML = depts.map(dept => {
+      const isClosed  = dept.status !== 'open';
+      const waitClass = dept.waitMin < 15 ? 'badge-green' : dept.waitMin <= 30 ? 'badge-yellow' : 'badge-red';
+      const fastAvail = !isClosed && dept.queue < 10;
+      
+      // Pulls the image from app.js, defaults to doctor2.png if missing
+      const docImg    = dept.doctorImg || 'doctor2.png'; 
+
+      return `
+        <div class="dept-full-card">
+          <div class="dept-full-card-header">
+            <div class="dept-full-icon-name">
+              <div class="dept-full-icon" style="background:${dept.colour}15;">${dept.icon}</div>
+              <div>
+                <div class="dept-full-name">${dept.name}</div>
+                <div class="dept-full-spec">${dept.specialisation}</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">
+              ${isClosed
+                ? '<span class="badge badge-red badge-dot">Closed Today</span>'
+                : `<span class="badge ${waitClass} badge-dot">${formatWait(dept.waitMin)} wait</span>`
+              }
+              ${fastAvail ? '<span class="badge badge-yellow">⚡ Fast-Track</span>' : ''}
+            </div>
+          </div>
+
+          <div class="dept-full-body">
+            <div class="dept-full-stat-col">
+              <div class="dept-full-stat-label">Now Serving</div>
+              <div class="dept-full-stat-val">${isClosed ? '—' : '#' + dept.serving}</div>
+              <div class="dept-full-stat-sub">Current token</div>
+            </div>
+            <div class="dept-full-stat-col">
+              <div class="dept-full-stat-label">In Queue</div>
+              <div class="dept-full-stat-val">${isClosed ? '—' : dept.queue}</div>
+              <div class="dept-full-stat-sub">Patients waiting</div>
+            </div>
+            <div class="dept-full-stat-col">
+              <div class="dept-full-stat-label">Est. Wait</div>
+              <div class="dept-full-stat-val" style="font-size:1.2rem;">${isClosed ? 'Closed' : formatWait(dept.waitMin)}</div>
+              <div class="dept-full-stat-sub">Approx. time</div>
+            </div>
+          </div>
+
+          <div class="dept-doctor-section">
+            <div class="dept-doctor-avatar">
+              <img src="${docImg}" alt="${dept.doctor}" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div>
+              <div class="dept-doctor-name">${dept.doctor}</div>
+              <div class="dept-doctor-role">${dept.specialisation} Consultant</div>
+            </div>
+            <div class="dept-doctor-room">${dept.room}</div>
+          </div>
+
+          <div class="dept-pricing-section">
+            <div class="dept-pricing-title">Consultation Fees &amp; Services</div>
+            <div class="pricing-grid">
+              <div class="pricing-item">
+                <div class="pricing-item-label">Standard OPD</div>
+                <div class="pricing-item-price">₹${dept.fee}</div>
+                <div class="pricing-item-sub">Walk-in / booked</div>
+              </div>
+              <div class="pricing-item featured">
+                <div class="pricing-item-label">⚡ Fast-Track</div>
+                <div class="pricing-item-price">₹${dept.fastFee}</div>
+                <div class="pricing-item-sub">Priority queue</div>
+              </div>
+              <div class="pricing-item">
+                <div class="pricing-item-label">Follow-Up Visit</div>
+                <div class="pricing-item-price">₹${Math.round(dept.fee * 0.6)}</div>
+                <div class="pricing-item-sub">Within 15 days</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dept-card-actions">
+            ${isClosed
+              ? '<span style="font-size:.82rem;color:var(--muted);">Closed — opens tomorrow 9 AM</span>'
+              : `<a href="queue.html" class="btn btn-secondary" style="font-size:.82rem;padding:.5rem 1rem;">View Queue</a>
+                 <button class="btn btn-gold" style="font-size:.82rem;padding:.5rem 1rem;" onclick="openDeptBookingFor('${dept.name}')">
+                   Book Token
+                 </button>`
+            }
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function applyFilter(type, el) {
+    currentDeptFilter = type;
+    document.querySelectorAll('.dept-filter-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+    renderDeptsList();
+  }
+  function filterDepts(val) {
+    currentSearch = val.trim();
+    renderDeptsList();
+  }
+  function sortDepts(val) {
+    currentSort = val;
+    renderDeptsList();
+  }
+
+  /* ── Booking modal ── */
+  function openDeptBooking() {
+    document.getElementById('deptBookingModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function openDeptBookingFor(deptName) {
+    const sel = document.getElementById('dbDeptSelect');
+    if (sel) sel.value = deptName;
+    openDeptBooking();
+  }
+  function closeDeptBooking() {
+    document.getElementById('deptBookingModal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  function closeDeptTokenModal() {
+    document.getElementById('deptTokenModal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function submitDeptBooking(e) {
+    e.preventDefault();
+    const name = document.getElementById('dbPatientName').value.trim();
+    const dept = document.getElementById('dbDeptSelect').value;
+    if (!name || !dept) return;
+
+    const token    = generateToken(dept, 'standard');
+    const details  = document.getElementById('deptTokenDetails');
+    details.innerHTML = `
+      <div style="background:var(--forest);border-radius:var(--radius-md);padding:1.75rem;margin-bottom:1.25rem;display:inline-block;min-width:180px;">
+        <div style="font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:.4rem;">Your Token</div>
+        <div style="font-family:var(--font-serif);font-size:3.5rem;font-weight:700;color:var(--gold-light);line-height:1;">${token.display}</div>
+        <div style="font-size:.72rem;color:rgba(255,255,255,.5);margin-top:.3rem;">${token.id}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.65rem;text-align:left;">
+        <div style="background:var(--cream);border-radius:10px;padding:.8rem .9rem;">
+          <div style="font-size:.7rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem;">Patient</div>
+          <div style="font-weight:600;font-size:.88rem;">${name}</div>
+        </div>
+        <div style="background:var(--cream);border-radius:10px;padding:.8rem .9rem;">
+          <div style="font-size:.7rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem;">Department</div>
+          <div style="font-weight:600;font-size:.88rem;">${token.deptIcon} ${dept}</div>
+        </div>
+        <div style="background:var(--cream);border-radius:10px;padding:.8rem .9rem;">
+          <div style="font-size:.7rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem;">Doctor</div>
+          <div style="font-weight:600;font-size:.88rem;">${token.doctor}</div>
+        </div>
+        <div style="background:var(--cream);border-radius:10px;padding:.8rem .9rem;">
+          <div style="font-size:.7rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem;">Est. Wait</div>
+          <div style="font-weight:700;font-size:1rem;color:var(--forest);">${formatWait(token.waitMin)}</div>
+        </div>
+      </div>
+    `;
+
+    closeDeptBooking();
+    document.getElementById('deptTokenModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    renderDeptsList();
+    showToast('Token Booked!', `${dept} · #${token.display} · ${formatWait(token.waitMin)}`, '🎫');
+  }
+
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+
+  /* ── Mobile nav ── */
+  document.getElementById('mobileToggle').addEventListener('click', function() {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+
+  /* ── Init ── */
+  populateBookingDept();
+  updateFilterCounts();
+  renderDeptsList();
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      closeDeptBooking();
+      closeDeptTokenModal();
+    }
+  });
+</script>
+</body>
+</html>

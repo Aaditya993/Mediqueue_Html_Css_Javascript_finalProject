@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediQueue — OPD Token System | Skip the Wait, Not the Care</title>
+  <meta name="description" content="MediQueue digitises hospital OPD queues so patients wait less and doctors treat more. Book your token in seconds." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     NAVBAR  (Zocdoc-style)
+═══════════════════════════════════════════════════════════════ -->
+<nav class="navbar" role="navigation" aria-label="Main navigation">
+  <div class="nav-container">
+
+    <!-- Logo -->
+    <a href="index.html" class="nav-logo" aria-label="MediQueue home">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
+          <path d="M12 8v4l3 3"/>
+        </svg>
+      </div>
+      <span class="nav-logo-text">Medi<span>Queue</span></span>
+    </a>
+
+    <!-- Desktop links -->
+    <ul class="nav-links" id="navLinks">
+
+      <!-- Browse Departments dropdown -->
+      <li class="nav-dropdown">
+        <button class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+          Browse Departments
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      <div class="nav-dropdown-menu" role="menu">
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="human-heart.png" alt="Cardio" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>Cardiology</strong>
+              <small>Heart &amp; vascular care</small>
+            </div>
+          </a>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="brain4.png" alt="Neuro" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>Neurology</strong>
+              <small>Brain &amp; nervous system</small>
+            </div>
+          </a>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="bone.png" alt="Ortho" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>Orthopaedics</strong>
+              <small>Bones, joints &amp; spine</small>
+            </div>
+          </a>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="shampoo.png" alt="General" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>General OPD</strong>
+              <small>General consultations</small>
+            </div>
+          </a>
+
+          <div class="nav-divider"></div>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="hospital.png" alt="All" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>View All Departments</strong>
+              <small>12 departments available</small>
+            </div>
+          </a>
+        </div>
+      </li>
+
+      <li><a href="queue.html" class="nav-link">Live Queue</a></li>
+      <li><a href="alerts.html" class="nav-link">Alerts</a></li>
+      <li><a href="help.html" class="nav-link">Help</a></li>
+      <li><a href="doctor-login.html" class="nav-link">Doctor Login</a></li>
+      <li>
+        <a href="queue.html">
+          <button class="btn-book-token" onclick="openBookingModal()">Book Token</button>
+        </a>
+      </li>
+    </ul>
+
+    <!-- Mobile toggle -->
+    <button class="nav-mobile-toggle" id="mobileToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     HERO SECTION
+═══════════════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+
+      <!-- LEFT: Copy -->
+      <div class="hero-copy">
+        <div class="hero-kicker">
+          <span class="hero-kicker-dot"></span>
+          Live Queue Active — 3 Departments Open
+        </div>
+
+        <h1 class="hero-headline">
+          Skip the Wait.<br>
+          Not the <em>Care.</em>
+        </h1>
+
+        <p class="hero-desc">
+          MediQueue digitises your hospital's OPD experience — book a digital token
+          in seconds, track your queue in real time, and arrive exactly when it's your turn.
+        </p>
+
+        <div class="hero-actions">
+          <button class="btn btn-gold btn-lg" onclick="openBookingModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Book My Token
+          </button>
+          <a href="queue.html" class="btn btn-secondary btn-lg">
+            View Live Queue
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-value" id="stat-patients">2,400+</div>
+            <div class="hero-stat-label">Patients served today</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">12</div>
+            <div class="hero-stat-label">Departments active</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">~8 min</div>
+            <div class="hero-stat-label">Avg. wait reduction</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Visual -->
+     <div class="hero-visual" style="position: relative; z-index: 1;">
+
+        <div class="hero-badge-float badge-float-top" style="position: absolute; top: -50px; right: 37px; background: transparent; box-shadow: none; border: none; padding: 0; z-index: 0;">
+          <img src="heart.png" alt="Floating Heart" style="width: 150px; height: auto; object-fit: contain; filter: drop-shadow(0 15px 20px rgba(0,0,0,0.4));">
+        </div>
+
+        <div class="hero-img-wrap" style="position: relative; z-index: 1;">
+          <img src="surgeon.png" alt="Hero Image" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+        </div>
+
+        <div class="hero-badge-float badge-float-bottom" style="position: absolute;  bottom:70px; left: -30px; z-index: 2;">
+          <div class="badge-float-icon" style="background: transparent;">
+            <img src="doctor2.png" alt="Doctor" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover;">
+          </div>
+          <div class="badge-float-text">
+            <strong>Now Serving #039</strong>
+            <small>Dr. Mehta · Room 4</small>
+          </div>
+        </div>
+        
+        <div class="hero-img-content" style="position: absolute; bottom: -10px; left: 45%; transform: translateX(-58%); width: 77%; z-index: 3;">
+          <div class="hero-token-card">
+            <div class="hero-token-label">Your Token Number</div>
+            <div class="hero-token-number" id="heroTokenDisplay">042</div>
+            <div class="hero-token-meta">
+              <span class="hero-token-dept">General OPD</span>
+              <span>~12 min wait</span>
+            </div>
+          </div>
+        </div>
+        
+      </div> </div> </div> </section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     LIVE TICKER
+═══════════════════════════════════════════════════════════════ -->
+<div class="live-ticker" aria-label="Live hospital updates">
+  <div class="ticker-bar">
+    <div class="ticker-label">
+      <span class="ticker-label-dot"></span>
+      Live Updates
+    </div>
+    <div class="ticker-content">
+      <div class="ticker-track" id="tickerTrack">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     FEATURES STRIP
+═══════════════════════════════════════════════════════════════ -->
+<section class="features-strip" aria-label="Key features">
+  <div class="container">
+    <div class="features-strip-grid">
+      
+      <div class="feature-strip-item">
+        <div class="feature-strip-icon">
+          <img src="electric-flash.png" alt="Instant" style="width: 32px; height: 32px; object-fit: contain; display: block;">
+        </div>
+        <div class="feature-strip-text">
+          <strong>Instant Token</strong>
+          <small>Generated in under 3 seconds</small>
+        </div>
+      </div>
+
+      <div class="feature-strip-item">
+        <div class="feature-strip-icon">
+          <img src="clock-icon.png" alt="Queue" style="width: 32px; height: 32px; object-fit: contain; display: block;">
+        </div>
+        <div class="feature-strip-text">
+          <strong>Real-Time Queue</strong>
+          <small>Refreshes every 30 seconds</small>
+        </div>
+      </div>
+
+      <div class="feature-strip-item">
+        <div class="feature-strip-icon">
+          <img src="bell-icon.png" alt="Alerts" style="width: 32px; height: 32px; object-fit: contain; display: block;">
+        </div>
+        <div class="feature-strip-text">
+          <strong>Smart Alerts</strong>
+          <small>Notified when your turn nears</small>
+        </div>
+      </div>
+
+      <div class="feature-strip-item">
+        <div class="feature-strip-icon">
+          <img src="premium-icon.png" alt="Fast-Track" style="width: 32px; height: 32px; object-fit: contain; display: block;">
+        </div>
+        <div class="feature-strip-text">
+          <strong>Fast-Track Option</strong>
+          <small>Priority queue available</small>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     HOW IT WORKS
+═══════════════════════════════════════════════════════════════ -->
+<section class="section how-it-works" id="how-it-works" style="position: relative; overflow: hidden; z-index: 1;">
+  
+  <img src="doctorgola.png" alt="Doctor" 
+       style="position: absolute; left: -4%; bottom: 0; height: 105%; max-width: 60%; transform: translateX(-15%); object-fit: contain; object-position: left bottom; opacity: 1; z-index: -1; pointer-events: none;">
+
+  <div class="container" style="position: relative; z-index: 2;">
+    <div style="text-align:center; max-width:560px; margin:0 auto 0.5rem;">
+      <div class="section-label">Simple Process</div>
+      <h2 class="section-title">Queue Smarter in Three Steps</h2>
+      <p class="section-subtitle">No app download. No complicated registration. Just choose, book, and wait comfortably.</p>
+    </div>
+
+    <div class="hiw-grid">
+
+      <div class="hiw-card">
+        <div class="hiw-step-number">01</div>
+        <div class="hiw-icon" style="background: transparent;">
+          <img src="hospital.png" alt="Choose Department" style="width: 48px; height: 48px; object-fit: contain;">
+        </div>
+        <div class="hiw-title">Choose Your Department</div>
+        <p class="hiw-desc">Browse all 12 active OPD departments. See real-time doctor availability, current queue length, and estimated wait times before you commit.</p>
+      </div>
+
+      <div class="hiw-card">
+        <div class="hiw-step-number">02</div>
+        <div class="hiw-icon" style="background: transparent;">
+          <img src="id-card-token.png" alt="Book Token" style="width: 48px; height: 48px; object-fit: contain;">
+        </div>
+        <div class="hiw-title">Book a Digital Token</div>
+        <p class="hiw-desc">Receive your unique digital token instantly. Your position is secured in the queue. No physical slip, no crowded waiting area, no confusion.</p>
+      </div>
+
+      <div class="hiw-card">
+        <div class="hiw-step-number">03</div>
+        <div class="hiw-icon" style="background: transparent;">
+          <img src="red-emergency-alert.png" alt="Track Time" style="width: 48px; height: 48px; object-fit: contain;">
+        </div>
+        <div class="hiw-title">Track &amp; Arrive on Time</div>
+        <p class="hiw-desc">Monitor the live queue dashboard. We'll alert you when you're next. Arrive at the clinic just in time — spend your wait time how you choose.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     DEPARTMENTS PREVIEW
+═══════════════════════════════════════════════════════════════ -->
+<section class="section depts-section" id="departments">
+  <div class="container">
+    <div class="depts-header">
+      <div>
+        <div class="section-label">Active Now</div>
+        <h2 class="section-title">Today's Open Departments</h2>
+      </div>
+      <a href="departments.html" class="btn btn-secondary">
+        View All Departments →
+      </a>
+    </div>
+
+    <div class="depts-grid" id="deptsGrid">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     TRUST / TESTIMONIALS
+═══════════════════════════════════════════════════════════════ -->
+<section class="section premium-testimonials" id="testimonials">
+  <div class="pt-glow glow-left"></div>
+  <div class="pt-glow glow-right"></div>
+  
+  <svg class="pt-arch" viewBox="0 0 1000 300" preserveAspectRatio="none">
+    <path d="M0,300 C250,50 750,50 1000,300" fill="none" stroke="rgba(201,168,76,0.15)" stroke-width="2" />
+  </svg>
+
+  <div class="container pt-container">
+    <div class="pt-header">
+      <h2>Partnered with the best in <em>healthcare</em></h2>
+      <p>Trusted by thousands of patients and leading doctors daily.</p>
+    </div>
+
+    <div class="t-carousel-wrap">
+      <button class="t-arrow t-prev" onclick="moveCarousel(-1)">❮</button>
+
+      <div class="t-track" id="testimonialTrack">
+        
+        <div class="t-card" onclick="setCarousel(0)">
+          <div class="t-avatar"><img src="priya.png" alt="Patient"></div>
+          <div class="t-content">
+            <div class="t-badge">Cardiology Patient</div>
+            <div class="t-name">Priya Raghavan</div>
+            <p class="t-quote">"I used to spend three hours just waiting. With MediQueue I tracked my token from home and walked in right on time. This is how healthcare should work."</p>
+          </div>
+        </div>
+
+        <div class="t-card" onclick="setCarousel(1)">
+          <div class="t-avatar"><img src="doctor3.png" alt="Doctor"></div>
+          <div class="t-content">
+            <div class="t-badge">Senior Consultant</div>
+            <div class="t-name">Dr. Deepak Mehta</div>
+            <p class="t-quote">"As a doctor, I've seen my consultation flow improve dramatically. The queue system means patients arrive prepared and on time — fewer delays, better care."</p>
+          </div>
+        </div>
+
+        <div class="t-card active" onclick="setCarousel(2)">
+          <div class="t-avatar"><img src="sendhil.png" alt="Patient"></div>
+          <div class="t-content">
+            <div class="t-badge">Orthopaedics Visitor</div>
+            <div class="t-name"> Ganesh bassi </div>
+            <p class="t-quote">"Brought my elderly mother for a check-up. The fast-track option was a lifesaver — she was seen within 20 minutes. Elegant and very easy to use."</p>
+          </div>
+        </div>
+
+        <div class="t-card" onclick="setCarousel(3)">
+          <div class="t-avatar"><img src="jennifer.png" alt="Patient"></div>
+          <div class="t-content">
+            <div class="t-badge">Paediatrics Parent</div>
+            <div class="t-name">jennifer Gonźalez</div>
+            <p class="t-quote">"Waiting with a sick toddler used to be a nightmare. Now I book the token, stay in the car, and only walk in when our number is 2 spots away. Amazing."</p>
+          </div>
+        </div>
+
+        <div class="t-card" onclick="setCarousel(4)">
+          <div class="t-avatar"><img src="doctor5.png" alt="Doctor"></div>
+          <div class="t-content">
+            <div class="t-badge">Head of Neurology</div>
+            <div class="t-name">Dr. P. Smith</div>
+            <p class="t-quote">"The emergency alert system is brilliant. If I get pulled into the ICU, a code is triggered and the waiting room is instantly informed of the delay."</p>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="t-arrow t-next" onclick="moveCarousel(1)">❯</button>
+    </div>
+
+    <div class="t-dots">
+      <span class="t-dot" onclick="setCarousel(0)"></span>
+      <span class="t-dot" onclick="setCarousel(1)"></span>
+      <span class="t-dot active" onclick="setCarousel(2)"></span>
+      <span class="t-dot" onclick="setCarousel(3)"></span>
+      <span class="t-dot" onclick="setCarousel(4)"></span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CTA BANNER  — with wave top + wave bottom
+═══════════════════════════════════════════════════════════════ -->
+
+<!-- TOP WAVE: testimonials (#0a170f) → CTA (#1a3a2a) -->
+<div class="cta-wave-top" aria-hidden="true">
+  <svg viewBox="0 0 1440 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,30 C200,90 400,5 600,50 C800,95 1000,15 1200,55 C1320,78 1390,35 1440,45 L1440,110 L0,110 Z"
+          fill="#1a3a2a" opacity="0.45"/>
+    <path d="M0,55 C180,10 380,85 580,40 C780,−5 980,75 1180,35 C1320,8 1390,60 1440,48 L1440,110 L0,110 Z"
+          fill="#1a3a2a" opacity="0.7"/>
+    <path d="M0,72 C240,25 480,100 720,58 C960,16 1200,82 1440,48 L1440,110 L0,110 Z"
+          fill="#1a3a2a"/>
+  </svg>
+</div>
+
+<section class="cta-banner">
+  <div class="container">
+    <div class="cta-inner">
+      <div>
+        <h2 class="cta-title">Ready to <em>skip</em> the waiting room?</h2>
+        <p class="cta-sub">Book your digital OPD token right now and experience the future of hospital queuing.</p>
+      </div>
+      <div class="cta-actions">
+        <button class="btn btn-gold btn-lg" onclick="openBookingModal()">
+          🎫 Book My Token
+        </button>
+        <a href="queue.html" class="btn btn-lg" style="background:rgba(255,255,255,0.12);color:#fff;border:1.5px solid rgba(255,255,255,0.3);">
+          View Live Queue
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     FOOTER  — Big-type editorial layout
+═══════════════════════════════════════════════════════════════ -->
+<footer class="footer-new" id="footer">
+
+  <!-- ── Wave divider (KEPT AS-IS): CTA → Footer ── -->
+  <div class="footer-wave-wrap" aria-hidden="true">
+    <svg class="footer-wave-svg" viewBox="0 0 1440 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,40 C180,90 360,10 540,55 C720,100 900,20 1080,60 C1260,100 1360,30 1440,50 L1440,110 L0,110 Z"
+            fill="#2c5c42" opacity="0.45"/>
+      <path d="M0,60 C200,10 400,90 600,45 C800,0 1000,80 1200,40 C1320,18 1390,65 1440,55 L1440,110 L0,110 Z"
+            fill="#1a3a2a" opacity="0.7"/>
+      <path d="M0,75 C240,30 480,100 720,60 C960,20 1200,85 1440,50 L1440,110 L0,110 Z"
+            fill="#0f2318"/>
+    </svg>
+  </div>
+
+  <!-- ── Footer body ── -->
+  <div class="footer-new-body">
+
+    <!-- ── TOP SECTION: Logo · Nav · Newsletter ── -->
+    <div class="ft-top">
+
+      <!-- Left: logo mark -->
+      <div class="ft-brand">
+        <a href="index.html" class="ft-logo-link" aria-label="MediQueue home">
+          <div class="ft-logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
+              <path d="M12 8v4l3 3"/>
+            </svg>
+          </div>
+          <span class="ft-logo-text">Medi<em>Queue</em>®</span>
+        </a>
+      </div>
+
+      <!-- Centre: nav links with brackets like reference -->
+      <nav class="ft-nav" aria-label="Footer links">
+        <span class="ft-nav-bracket">[</span>
+        <div class="ft-nav-links">
+          <a href="index.html">HOME</a>
+          <a href="departments.html">DEPARTMENTS</a>
+          <a href="queue.html">LIVE QUEUE</a>
+          <a href="alerts.html">ALERTS</a>
+          <a href="help.html">HELP</a>
+          <a href="doctor-login.html">DOCTOR LOGIN</a>
+        </div>
+        <span class="ft-nav-bracket">]</span>
+      </nav>
+
+      <!-- Right: newsletter sign-up -->
+      <div class="ft-newsletter">
+        <div class="ft-newsletter-heading">
+          <span>SIGN UP</span>
+          <span>TO OUR</span>
+          <span class="ft-nl-accent">NEWSLETTER</span>
+        </div>
+        <form class="ft-nl-form" onsubmit="handleNewsletterSubmit(event)">
+          <input
+            type="email"
+            class="ft-nl-input"
+            placeholder="YOUR EMAIL"
+            aria-label="Email address"
+            required
+          />
+          <button type="submit" class="ft-nl-btn" aria-label="Subscribe">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+
+    </div><!-- end ft-top -->
+
+    <!-- ── GIANT LOGO TEXT ── -->
+    <div class="ft-giant-wrap" aria-hidden="true">
+      <span class="ft-giant-text">MediQueue</span>
+    </div>
+
+    <!-- ── BOTTOM BAR ── -->
+    <div class="ft-bottom">
+
+      <!-- Left: copyright -->
+      <div class="ft-bottom-copy">
+        <span>© MEDIQUEUE / 2026</span>
+        <span>COLLEGE FINAL YEAR PROJECT</span>
+      </div>
+
+      <!-- Centre: legal links -->
+      <div class="ft-bottom-legal">
+        <a href="#">PRIVACY POLICY</a>
+        <a href="#">TERMS OF USE</a>
+        <a href="#">ACCESSIBILITY</a>
+        <a href="#">HELP CENTRE</a>
+      </div>
+
+      <!-- Right: socials + contact -->
+      <div class="ft-bottom-right">
+        <div class="ft-socials">
+          <a href="#" class="ft-social-link">INSTAGRAM</a>
+          <a href="#" class="ft-social-link">LINKEDIN</a>
+        </div>
+        <a href="mailto:support@mediqueue.in" class="ft-email">SUPPORT@MEDIQUEUE.IN</a>
+      </div>
+
+    </div><!-- end ft-bottom -->
+
+  </div><!-- end footer-new-body -->
+</footer>
+
+<script>
+function handleNewsletterSubmit(e) {
+  e.preventDefault();
+  const input = e.target.querySelector('.ft-nl-input');
+  if (typeof showToast === 'function') {
+    showToast('Subscribed!', `${input.value} added to newsletter.`, '✉️');
+  }
+  input.value = '';
+}
+</script>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     BOOKING MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="bookingModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-box">
+    <div class="modal-header" style="position:relative;">
+      <div class="modal-header-icon">🎫</div>
+      <div>
+        <div class="modal-header-title" id="modalTitle">Book Your OPD Token</div>
+        <div class="modal-header-sub">Secure your place in the queue instantly</div>
+      </div>
+      <button class="modal-close" onclick="closeBookingModal()" aria-label="Close">✕</button>
+    </div>
+
+    <div class="modal-body" id="modalBody">
+      <form id="bookingForm" onsubmit="submitBooking(event)">
+        <div style="display:flex;flex-direction:column;gap:1.1rem;">
+
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--charcoal-mid);display:block;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase;">Full Name</label>
+            <input type="text" id="patientName" placeholder="e.g. Arjun Sharma" required
+              style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.95rem;font-family:var(--font-sans);background:var(--ivory);color:var(--charcoal);outline:none;transition:border-color .2s;"
+              onfocus="this.style.borderColor='var(--forest-mid)'"
+              onblur="this.style.borderColor='var(--border)'" />
+          </div>
+
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--charcoal-mid);display:block;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase;">Department</label>
+            <select id="deptSelect" required
+              style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.95rem;font-family:var(--font-sans);background:var(--ivory);color:var(--charcoal);outline:none;cursor:pointer;transition:border-color .2s;"
+              onfocus="this.style.borderColor='var(--forest-mid)'"
+              onblur="this.style.borderColor='var(--border)'">
+              <option value="">Select a department…</option>
+              <option value="General OPD">General OPD</option>
+              <option value="Cardiology">Cardiology</option>
+              <option value="Neurology">Neurology</option>
+              <option value="Orthopaedics">Orthopaedics</option>
+              <option value="Ophthalmology">Ophthalmology</option>
+              <option value="Dermatology">Dermatology</option>
+              <option value="Gynaecology">Gynaecology</option>
+              <option value="Paediatrics">Paediatrics</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--charcoal-mid);display:block;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase;">Token Type</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+              <label style="cursor:pointer;">
+                <input type="radio" name="tokenType" value="standard" checked style="display:none;" />
+                <div class="token-type-option" id="opt-standard" onclick="selectTokenType('standard')"
+                  style="border:2px solid var(--forest);background:rgba(44,92,66,0.05);border-radius:10px;padding:1rem;text-align:center;">
+                  <div style="font-size:1.4rem;margin-bottom:.3rem;">🎫</div>
+                  <div style="font-size:.85rem;font-weight:700;color:var(--forest);">Standard</div>
+                  <div style="font-size:.74rem;color:var(--muted);">Free · Normal queue</div>
+                </div>
+              </label>
+              <label style="cursor:pointer;">
+                <input type="radio" name="tokenType" value="fasttrack" style="display:none;" />
+                <div class="token-type-option" id="opt-fasttrack" onclick="selectTokenType('fasttrack')"
+                  style="border:2px solid var(--border);border-radius:10px;padding:1rem;text-align:center;">
+                  <div style="font-size:1.4rem;margin-bottom:.3rem;">⚡</div>
+                  <div style="font-size:.85rem;font-weight:700;color:var(--charcoal);">Fast-Track</div>
+                  <div style="font-size:.74rem;color:var(--muted);">₹150 · Priority queue</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer" style="padding:1.5rem 0 0;margin-top:1rem;">
+          <button type="button" class="btn btn-secondary" onclick="closeBookingModal()">Cancel</button>
+          <button type="submit" class="btn btn-gold">Generate Token →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- TOKEN CONFIRMATION MODAL -->
+<div class="modal-overlay" id="tokenModal" role="dialog" aria-modal="true" aria-labelledby="tokenModalTitle">
+  <div class="modal-box">
+    <div class="modal-header" style="background:var(--forest-mid);position:relative;">
+      <div class="modal-header-icon">✅</div>
+      <div>
+        <div class="modal-header-title" id="tokenModalTitle">Token Confirmed!</div>
+        <div class="modal-header-sub" id="tokenModalSub">Your place in the queue is secured</div>
+      </div>
+      <button class="modal-close" onclick="closeTokenModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" id="tokenDetails" style="text-align:center;padding:2.5rem 2rem;">
+      <!-- Filled by JS -->
+    </div>
+    <div class="modal-footer">
+      <a href="queue.html" class="btn btn-primary">Track My Queue →</a>
+      <button class="btn btn-secondary" onclick="closeTokenModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════════════ -->
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="app.js"></script>
+<script>
+
+  /* ── Department data ── */
+ /* ── Department data ── */
+  const DEPARTMENTS = [
+    { id: 'gen',   name: 'General OPD',   icon: '<img src="hospital.png" alt="General" style="width: 28px; height: 28px; object-fit: contain;">', queue: 14, waitMin: 28, status: 'open',   doctor: 'Dr. S. Mehta' },
+    { id: 'card',  name: 'Cardiology',    icon: '<img src="human-heart.png" alt="Cardiology" style="width: 28px; height: 28px; object-fit: contain;">', queue: 7,  waitMin: 21, status: 'open',   doctor: 'Dr. A. Verma' },
+    { id: 'neuro', name: 'Neurology',     icon: '<img src="brain4.png" alt="Neurology" style="width: 28px; height: 28px; object-fit: contain;">', queue: 5,  waitMin: 15, status: 'open',   doctor: 'Dr. P. Iyer' },
+    { id: 'ortho', name: 'Orthopaedics',  icon: '<img src="bone.png" alt="Orthopaedics" style="width: 28px; height: 28px; object-fit: contain;">', queue: 9,  waitMin: 27, status: 'open',   doctor: 'Dr. R. Khan' },
+    { id: 'opht',  name: 'Ophthalmology', icon: '<img src="eye.png" alt="Ophthalmology" style="width: 28px; height: 28px; object-fit: contain;">', queue: 3,  waitMin: 9,  status: 'open',   doctor: 'Dr. N. Joshi' },
+    { id: 'derm',  name: 'Dermatology',   icon: '<img src="shampoo.png" alt="Dermatology" style="width: 28px; height: 28px; object-fit: contain;">', queue: 0,  waitMin: 0,  status: 'closed', doctor: 'Dr. S. Patel' },
+  ];
+
+  /* ── Render departments preview ── */
+  function renderDepts() {
+    const grid = document.getElementById('deptsGrid');
+    if (!grid) return;
+    grid.innerHTML = DEPARTMENTS.map(d => {
+      const statusBadge = d.status === 'open'
+        ? '<span class="badge badge-green badge-dot">Open</span>'
+        : '<span class="badge badge-red badge-dot">Closed</span>';
+      return `
+        <a href="departments.html" class="dept-card" aria-label="${d.name}">
+          <div class="dept-card-top">
+            <div class="dept-icon">${d.icon}</div>
+            ${statusBadge}
+          </div>
+          <div>
+            <div class="dept-name">${d.name}</div>
+            <div class="dept-meta">${d.doctor} · ${d.queue} in queue</div>
+          </div>
+          ${d.status === 'open' ? `
+          <div class="dept-wait">
+            <span class="dept-wait-label">Est. wait time</span>
+            <span class="dept-wait-time">~${d.waitMin} min</span>
+          </div>` : `
+          <div class="dept-wait" style="justify-content:center;">
+            <span style="font-size:.83rem;color:var(--muted);">Opens at 9:00 AM tomorrow</span>
+          </div>`}
+        </a>`;
+    }).join('');
+  }
+
+  /* ── Live ticker ── */
+  /* ── Live ticker ── */
+  /* ── Live ticker ── */
+  /* ── Live ticker ── */
+  const TICKER_ITEMS = [
+    { 
+      icon: '<img src="hospital.png" alt="icon" style="width: 18px; height: 18px; min-width: 18px; object-fit: contain; vertical-align: sub;">', 
+      text: 'General OPD — Now serving token #039' 
+    },
+    { 
+      icon: '<img src="electric-flash.png" alt="icon" style="width: 18px; height: 18px; min-width: 18px; object-fit: contain; vertical-align: sub;">', 
+      text: 'Cardiology fast-track slots available' 
+    },
+    { 
+      icon: '<img src="red-emergency-alert.png" alt="icon" style="width: 18px; height: 18px; min-width: 18px; object-fit: contain; vertical-align: sub;">', 
+      text: 'Neurology queue: short delay of ~5 min' 
+    },
+    { 
+      icon: '<img src="bone.png" alt="icon" style="width: 18px; height: 18px; min-width: 18px; object-fit: contain; vertical-align: sub;">', 
+      text: 'Orthopaedics: Dr. Khan arrived — consultations resumed' 
+    },
+    { 
+      icon: '<img src="bell-icon.png" alt="icon" style="width: 18px; height: 18px; min-width: 18px; object-fit: contain; vertical-align: sub;">', 
+      text: 'Emergency alert: Code Blue drill at 3:00 PM today' 
+    },
+    { 
+      icon: '<img src="id-card-token.png" alt="icon" style="width: 18px; height: 18px; min-width: 18px; object-fit: contain; vertical-align: sub;">', 
+      text: 'Over 2,400 tokens issued today — new record!' 
+    },
+    { 
+      icon: '<img src="green-dot.png" alt="icon" style="width: 18px; height: 18px; min-width: 18px; object-fit: contain; vertical-align: sub;">', 
+      text: 'Ophthalmology — Now serving token #012' 
+    },
+    { 
+      icon: '<img src="pill.png" alt="icon" style="width: 18px; height: 18px; min-width: 18px; object-fit: contain; vertical-align: sub;">', 
+      text: 'Pharmacy open until 8:00 PM' 
+    }
+  ];
+  function buildTicker() {
+    const track = document.getElementById('tickerTrack');
+    if (!track) return;
+    const doubled = [...TICKER_ITEMS, ...TICKER_ITEMS];
+    track.innerHTML = doubled.map((item, i) =>
+      `<span class="ticker-item">
+        <span class="ticker-item-icon">${item.icon}</span>
+        <span>${item.text}</span>
+        ${i < doubled.length - 1 ? '<span class="ticker-sep">·</span>' : ''}
+      </span>`
+    ).join('');
+  }
+
+  /* ── Booking modal ── */
+  let selectedTokenType = 'standard';
+
+  function openBookingModal() {
+    document.getElementById('bookingModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeBookingModal() {
+    document.getElementById('bookingModal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  function closeTokenModal() {
+    document.getElementById('tokenModal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  function selectTokenType(type) {
+    selectedTokenType = type;
+    document.getElementById('opt-standard').style.border  = type === 'standard'  ? '2px solid var(--forest)' : '2px solid var(--border)';
+    document.getElementById('opt-standard').style.background = type === 'standard' ? 'rgba(44,92,66,0.05)' : '';
+    document.getElementById('opt-fasttrack').style.border = type === 'fasttrack' ? '2px solid var(--gold)' : '2px solid var(--border)';
+    document.getElementById('opt-fasttrack').style.background = type === 'fasttrack' ? 'rgba(201,168,76,0.07)' : '';
+  }
+
+  function submitBooking(e) {
+    e.preventDefault();
+    const name   = document.getElementById('patientName').value.trim();
+    const dept   = document.getElementById('deptSelect').value;
+    if (!name || !dept) return;
+
+    const token  = generateToken(dept);
+    const queuePos = Math.floor(Math.random() * 8) + 3;
+    const waitMin  = queuePos * 3 + Math.floor(Math.random() * 5);
+
+    closeBookingModal();
+
+    const details = document.getElementById('tokenDetails');
+    details.innerHTML = `
+      <div style="background:var(--forest);border-radius:var(--radius-md);padding:2rem;margin-bottom:1.5rem;display:inline-block;min-width:200px;">
+        <div style="font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:.5rem;">Your Token</div>
+        <div style="font-family:var(--font-serif);font-size:4rem;font-weight:700;color:var(--gold-light);line-height:1;">${token.display}</div>
+        <div style="font-size:.8rem;color:rgba(255,255,255,.65);margin-top:.5rem;">${token.id}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;text-align:left;margin-top:.25rem;">
+        <div style="background:var(--cream);border-radius:10px;padding:.9rem 1rem;">
+          <div style="font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem;">Patient</div>
+          <div style="font-weight:600;font-size:.9rem;color:var(--charcoal);">${name}</div>
+        </div>
+        <div style="background:var(--cream);border-radius:10px;padding:.9rem 1rem;">
+          <div style="font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem;">Department</div>
+          <div style="font-weight:600;font-size:.9rem;color:var(--charcoal);">${dept}</div>
+        </div>
+        <div style="background:var(--cream);border-radius:10px;padding:.9rem 1rem;">
+          <div style="font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem;">Queue Position</div>
+          <div style="font-weight:700;font-size:1rem;color:var(--forest);">#${queuePos} in line</div>
+        </div>
+        <div style="background:var(--cream);border-radius:10px;padding:.9rem 1rem;">
+          <div style="font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem;">Est. Wait</div>
+          <div style="font-weight:700;font-size:1rem;color:var(--forest);">~${waitMin} min</div>
+        </div>
+      </div>
+      ${selectedTokenType === 'fasttrack' ? `
+      <div style="background:rgba(245,200,66,.15);border:1px solid rgba(201,168,76,.4);border-radius:10px;padding:.75rem 1rem;margin-top:.75rem;font-size:.83rem;color:#7a5f00;font-weight:600;">
+        ⚡ Fast-Track Priority Token — ₹150 fee payable at reception
+      </div>` : ''}
+    `;
+
+    document.getElementById('tokenModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    // update hero display
+    document.getElementById('heroTokenDisplay').textContent = token.display;
+  }
+
+  /* ── Close modal on overlay click ── */
+  document.getElementById('bookingModal').addEventListener('click', function(e) {
+    if (e.target === this) closeBookingModal();
+  });
+  document.getElementById('tokenModal').addEventListener('click', function(e) {
+    if (e.target === this) closeTokenModal();
+  });
+
+  /* ── Mobile nav ── */
+  const mobileToggle = document.getElementById('mobileToggle');
+  const navLinks = document.getElementById('navLinks');
+  mobileToggle.addEventListener('click', function() {
+    navLinks.classList.toggle('open');
+    const isOpen = navLinks.classList.contains('open');
+    mobileToggle.setAttribute('aria-expanded', isOpen);
+    const spans = mobileToggle.querySelectorAll('span');
+    if (isOpen) {
+      spans[0].style.transform = 'rotate(45deg) translate(5px,5px)';
+      spans[1].style.opacity   = '0';
+      spans[2].style.transform = 'rotate(-45deg) translate(5px,-5px)';
+    } else {
+      spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+    }
+  });
+
+  /* ── Animate stat counter ── */
+  function animateCounter(el, target, suffix) {
+    let current = 0;
+    const step = Math.ceil(target / 60);
+    const timer = setInterval(() => {
+      current = Math.min(current + step, target);
+      el.textContent = current.toLocaleString() + suffix;
+      if (current >= target) clearInterval(timer);
+    }, 24);
+  }
+
+  /* ── Premium Carousel Logic (With Swipe Support) ── */
+  const tCards = document.querySelectorAll('.t-card');
+  const tDots = document.querySelectorAll('.t-dot');
+  const tTrack = document.getElementById('testimonialTrack');
+  let currentCardIndex = 2; // Starts with the middle card
+
+  function updateCarousel() {
+    if (!tCards.length) return;
+    const total = tCards.length;
+    
+    tCards.forEach((card, index) => {
+      // Reset classes
+      card.className = 't-card';
+      
+      // Assign active, prev, next, or hidden
+      if (index === currentCardIndex) {
+        card.classList.add('active');
+      } else if (index === (currentCardIndex - 1 + total) % total) {
+        card.classList.add('prev');
+      } else if (index === (currentCardIndex + 1) % total) {
+        card.classList.add('next');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+
+    // Update the dots
+    tDots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === currentCardIndex);
+    });
+  }
+
+  function setCarousel(index) {
+    currentCardIndex = index;
+    updateCarousel();
+    resetAutoPlay();
+  }
+
+  function moveCarousel(direction) {
+    if (!tCards.length) return;
+    const total = tCards.length;
+    currentCardIndex = (currentCardIndex + direction + total) % total;
+    updateCarousel();
+    resetAutoPlay();
+  }
+
+  // ── Swipe Detection for Mobile / Touch ──
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  if (tTrack) {
+    tTrack.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+      clearInterval(autoPlayTimer); // Pause auto-play while touching
+    }, { passive: true });
+
+    tTrack.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+      resetAutoPlay(); // Resume auto-play after swipe
+    }, { passive: true });
+  }
+
+  function handleSwipe() {
+    const swipeThreshold = 50; // Minimum distance to trigger swipe
+    if (touchEndX < touchStartX - swipeThreshold) {
+      moveCarousel(1); // Swiped Left -> Next Card
+    }
+    if (touchEndX > touchStartX + swipeThreshold) {
+      moveCarousel(-1); // Swiped Right -> Previous Card
+    }
+  }
+
+  // Auto-play every 5 seconds
+  let autoPlayTimer = setInterval(() => moveCarousel(1), 5000);
+  
+  function resetAutoPlay() {
+    clearInterval(autoPlayTimer);
+    autoPlayTimer = setInterval(() => moveCarousel(1), 5000);
+  }
+
+  // Initialize the carousel immediately
+  updateCarousel();
+
+  /* ── Init ── */
+  renderDepts();
+  buildTicker();
+
+  // Animate patient counter
+  setTimeout(() => {
+    const el = document.getElementById('stat-patients');
+    animateCounter(el, 2400, '+');
+  }, 600);
+
+    // Auto-refresh dept wait times every 30s
+    setInterval(() => {
+      DEPARTMENTS.forEach(d => {
+        if (d.status === 'open') {
+          d.queue   = Math.max(0, d.queue + Math.floor(Math.random() * 3) - 1);
+          d.waitMin = Math.max(2, d.waitMin + Math.floor(Math.random() * 4) - 2);
+        }
+      });
+      renderDepts();
+    }, 30000);
+  
+  </script>
+  </body>
+  </html>

@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emergency Alerts — MediQueue</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── Alerts page specific ── */
+    .alerts-hero {
+      background: var(--forest);
+      padding: 3.5rem 0 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .alerts-hero-inner {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .alerts-hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+    .alerts-hero-sub {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.6);
+      margin-top: 0.4rem;
+    }
+    .alerts-live-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1.25rem;
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .alerts-live-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #f87171;
+      animation: pulse 1.5s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    .alerts-live-count {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      margin-right: 0.25rem;
+    }
+
+    /* ── Main ── */
+    .alerts-main {
+      background: var(--ivory);
+      padding: 3rem 0 5rem;
+    }
+    .alerts-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    /* ── Filter tabs ── */
+    .alert-filter-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.75rem;
+      flex-wrap: wrap;
+    }
+    .alert-tab {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1rem;
+      border-radius: 100px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      color: var(--charcoal-mid);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .alert-tab.active { background: var(--forest); color: #fff; border-color: var(--forest); }
+    .alert-tab-count {
+      background: rgba(255,255,255,0.25);
+      border-radius: 100px;
+      padding: 0.05rem 0.45rem;
+      font-size: 0.72rem;
+    }
+    .alert-tab:not(.active) .alert-tab-count { background: var(--cream-dark); color: var(--muted); }
+
+    /* ── Alert cards ── */
+    .alerts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+    .alert-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: box-shadow var(--transition), transform var(--transition);
+      position: relative;
+    }
+    .alert-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .alert-card-strip {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      border-radius: 0;
+    }
+    .strip-critical { background: #ef4444; }
+    .strip-high     { background: #f97316; }
+    .strip-medium   { background: #eab308; }
+    .strip-low      { background: var(--forest-mid); }
+
+    .alert-card-inner {
+      padding: 1.5rem 1.5rem 1.5rem 1.75rem;
+    }
+    .alert-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .alert-card-title-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .alert-icon-wrap {
+      width: 44px; height: 44px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .icon-critical { background: rgba(239,68,68,0.1); }
+    .icon-high     { background: rgba(249,115,22,0.1); }
+    .icon-medium   { background: rgba(234,179,8,0.12); }
+    .icon-low      { background: rgba(44,92,66,0.1); }
+
+    .alert-card-title {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--charcoal);
+      line-height: 1.3;
+    }
+    .alert-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+    .alert-card-meta-sep { color: var(--border); }
+    .alert-card-message {
+      font-size: 0.9rem;
+      color: var(--charcoal-mid);
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+    .alert-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+    .alert-dept-tag {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--forest-mid);
+      background: rgba(44,92,66,0.08);
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+    }
+    .alert-card-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .alert-btn-sm {
+      padding: 0.4rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      border: 1.5px solid var(--border);
+      background: #fff;
+      color: var(--charcoal-mid);
+      font-family: var(--font-sans);
+    }
+    .alert-btn-sm:hover { background: var(--cream); }
+    .alert-btn-sm.primary {
+      background: var(--forest);
+      color: #fff;
+      border-color: var(--forest);
+    }
+    .alert-btn-sm.primary:hover { background: var(--forest-mid); }
+
+    /* Priority badges */
+    .priority-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+      white-space: nowrap;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .pb-critical { background: rgba(239,68,68,0.1); color: #b91c1c; }
+    .pb-high     { background: rgba(249,115,22,0.1); color: #c2410c; }
+    .pb-medium   { background: rgba(234,179,8,0.12); color: #92400e; }
+    .pb-low      { background: rgba(44,92,66,0.1);  color: var(--forest-mid); }
+
+    /* ── Right sidebar ── */
+    .alerts-sidebar { position: sticky; top: calc(var(--navbar-h) + 1rem); }
+    .alert-sidebar-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    .alert-sidebar-header {
+      padding: 1.1rem 1.25rem;
+      background: var(--forest);
+    }
+    .alert-sidebar-title {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .alert-sidebar-sub { font-size: 0.74rem; color: rgba(255,255,255,0.55); margin-top: 0.15rem; }
+    .alert-sidebar-body { padding: 1.25rem; }
+
+    /* Stats grid */
+    .alert-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .alert-stat-box {
+      background: var(--cream);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+      text-align: center;
+    }
+    .alert-stat-num {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--forest);
+      line-height: 1;
+    }
+    .alert-stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 0.25rem; font-weight: 500; }
+    .alert-stat-box.critical { background: rgba(239,68,68,0.06); }
+    .alert-stat-box.critical .alert-stat-num { color: #b91c1c; }
+
+    /* Emergency button */
+    .emergency-call-card {
+      background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .emergency-call-card::after {
+      content: '🚨';
+      position: absolute;
+      right: -0.5rem;
+      bottom: -1rem;
+      font-size: 5rem;
+      opacity: 0.08;
+    }
+    .emergency-call-title {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.3rem;
+    }
+    .emergency-call-sub {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 1rem;
+    }
+    .emergency-call-number {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fca5a5;
+      letter-spacing: 0.04em;
+    }
+    .emergency-call-btn {
+      margin-top: 0.85rem;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: var(--radius-sm);
+      padding: 0.55rem 1.25rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      transition: background var(--transition);
+      display: inline-block;
+    }
+    .emergency-call-btn:hover { background: rgba(255,255,255,0.25); }
+
+    /* Status list */
+    .dept-status-list { display: flex; flex-direction: column; gap: 0; }
+    .dept-status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.83rem;
+    }
+    .dept-status-row:last-child { border-bottom: none; }
+    .dept-status-name { color: var(--charcoal); font-weight: 500; }
+    .dept-status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .dept-status-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .dot-open   { background: #22c55e; }
+    .dot-closed { background: #ef4444; }
+    .dot-delay  { background: #eab308; }
+
+    /* ── EMERGENCY POPUP MODAL ── */
+    .emergency-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(139,0,0,0.5);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity var(--transition), visibility var(--transition);
+    }
+    .emergency-modal-overlay.active { opacity: 1; visibility: visible; }
+    .emergency-modal-box {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 30px 80px rgba(139,0,0,0.35);
+      max-width: 540px;
+      width: 100%;
+      overflow: hidden;
+      transform: scale(0.92) translateY(20px);
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .emergency-modal-overlay.active .emergency-modal-box { transform: scale(1) translateY(0); }
+    .emergency-modal-header {
+      background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: relative;
+    }
+    .emergency-modal-icon {
+      width: 56px; height: 56px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      flex-shrink: 0;
+      animation: emergencyPulse 1.5s ease-in-out infinite;
+    }
+    @keyframes emergencyPulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.3); }
+      50%      { box-shadow: 0 0 0 10px rgba(255,255,255,0); }
+    }
+    .emergency-modal-title {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .emergency-modal-subtitle { font-size: 0.82rem; color: rgba(255,255,255,0.65); margin-top: 0.2rem; }
+    .emergency-modal-close {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: background var(--transition);
+    }
+    .emergency-modal-close:hover { background: rgba(255,255,255,0.25); }
+    .emergency-modal-body { padding: 2rem; }
+    .emergency-alert-content {
+      background: rgba(239,68,68,0.05);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.9rem;
+      color: var(--charcoal-mid);
+      line-height: 1.7;
+    }
+    .emergency-modal-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .em-meta-box {
+      background: var(--cream);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
+    }
+    .em-meta-label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: .25rem; }
+    .em-meta-value { font-size: 0.88rem; font-weight: 700; color: var(--charcoal); }
+    .emergency-modal-footer {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+    }
+
+    /* ── New alert compose form ── */
+    .compose-form { display: flex; flex-direction: column; gap: 0.85rem; }
+    .compose-input, .compose-select, .compose-textarea {
+      width: 100%;
+      padding: 0.65rem 0.9rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-family: var(--font-sans);
+      background: var(--ivory);
+      color: var(--charcoal);
+      outline: none;
+      transition: border-color .2s;
+    }
+    .compose-input:focus, .compose-select:focus, .compose-textarea:focus {
+      border-color: var(--forest-mid);
+    }
+    .compose-textarea { min-height: 80px; resize: vertical; }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .alerts-layout { grid-template-columns: 1fr; }
+      .alerts-sidebar { position: static; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" role="navigation">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
+          <path d="M12 8v4l3 3"/>
+        </svg>
+      </div>
+      <span class="nav-logo-text">Medi<span>Queue</span></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-dropdown">
+        <button class="nav-dropdown-toggle">Browse Departments
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu" role="menu">
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="human-heart.png" alt="Cardio" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>Cardiology</strong>
+              <small>Heart &amp; vascular care</small>
+            </div>
+          </a>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="brain4.png" alt="Neuro" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>Neurology</strong>
+              <small>Brain &amp; nervous system</small> 
+
+              <small> heart @a</small>
+            </div>
+          </a>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="bone.png" alt="Ortho" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>Orthopaedics</strong>
+              <small>Bones, joints &amp; spine</small>
+            </div>
+          </a>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="shampoo.png" alt="General" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>General OPD</strong>
+              <small>General consultations</small>
+            </div>
+          </a>
+
+          <div class="nav-divider"></div>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="hospital.png" alt="All" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>View All Departments</strong>
+              <small>12 departments available</small>
+            </div>
+          </a>
+        </div>
+      </li>
+      <li><a href="queue.html" class="nav-link">Live Queue</a></li>
+      <li><a href="alerts.html" class="nav-link active">Alerts</a></li>
+      <li><a href="help.html" class="nav-link">Help</a></li>
+      <li><a href="doctor-login.html" class="nav-link">Doctor Login</a></li>
+      <li><a href="queue.html"><button class="btn-book-token">Book Token</button></a></li>
+    </ul>
+    <button class="nav-mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+
+<!-- HERO -->
+<section class="alerts-hero" style="position: relative; overflow: hidden;">
+
+  <img src="emergency.png" alt="" aria-hidden="true"
+       style="position: absolute; 
+              bottom: -130px;      /* Use px to easily slide up or down */
+              left: 63%;          /* Puts it perfectly between the text and the search box */
+              transform: translateX(-50%); 
+              height: 160%;       /* Taller than the section for a grand look */
+              width: auto; 
+              max-width: none;    /* Stops the browser from squishing it */
+              object-fit: cover;  /* Keeps the proportions perfect */
+              z-index: 1;         /* Keeps it behind the content */
+              pointer-events: none; 
+              opacity: 0.9;">     /* High opacity so it pops! */
+
+  <div class="container" style="position: relative; z-index: 2;">
+    <div class="alerts-hero-inner">
+      <div>
+        <div class="tag" style="margin-bottom:.75rem;background:rgba(255,255,255,0.12);color:rgba(255,255,255,.8);">
+          <img src="bell-icon.png" alt="Alerts" style="width: 18px; height: 18px; object-fit: contain; vertical-align: middle; margin-right: 4px;">Notification Centre
+        </div>
+        <h1 class="alerts-hero-title">Hospital Emergency<br>&amp; Service Alerts</h1>
+        <p class="alerts-hero-sub">Real-time hospital-wide notifications, OPD delays, code alerts, and service updates.</p>
+      </div>
+      <div class="alerts-live-badge">
+        <span class="alerts-live-dot"></span>
+        <div>
+          <span class="alerts-live-count" id="criticalCount">2</span> Critical
+          <div style="font-size:.72rem;color:rgba(255,255,255,.5);margin-top:.15rem;" id="totalAlerts">6 total alerts today</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- MAIN -->
+<section class="alerts-main">
+  <div class="container">
+    <div class="alerts-layout">
+
+      <!-- LEFT: Alert list -->
+      <div>
+        <!-- Filter tabs -->
+        <div class="alert-filter-tabs" id="alertFilterTabs">
+          <button class="alert-tab active" onclick="filterAlerts('all', this)">
+            All <span class="alert-tab-count" id="tabAll">6</span>
+          </button>
+          <button class="alert-tab" onclick="filterAlerts('emergency', this)">
+            <img src="emergency-alert.png" alt="Emergency" style="width:16px; height:16px; object-fit:contain;"> Emergency <span class="alert-tab-count" id="tabEmergency">2</span>
+          </button>
+          <button class="alert-tab" onclick="filterAlerts('delay', this)">
+            <img src="clock-icon.png" alt="Delay" style="width:16px; height:16px; object-fit:contain;"> Delays <span class="alert-tab-count" id="tabDelay">1</span>
+          </button>
+          <button class="alert-tab" onclick="filterAlerts('closure', this)">
+            <img src="close.png" alt="Closure" style="width:16px; height:16px; object-fit:contain;"> Closures <span class="alert-tab-count" id="tabClosure">1</span>
+          </button>
+          <button class="alert-tab" onclick="filterAlerts('info', this)">
+            <img src="electric-flash.png" alt="Info" style="width:16px; height:16px; object-fit:contain;"> Info <span class="alert-tab-count" id="tabInfo">2</span>
+          </button>
+        </div>
+        <!-- Post new alert (admin-style) -->
+        <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);padding:1.5rem;margin-bottom:1.5rem;">
+         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+  
+  <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(44,92,66,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+    <img src="megaphone-speaker.png" alt="Post" style="width: 20px; height: 20px; object-fit: contain;">
+  </div>
+  
+  <div style="font-family: var(--font-serif); font-size: 1rem; font-weight: 700; color: var(--forest);">
+    Post New Alert
+  </div>
+
+</div>
+          <form class="compose-form" id="composeForm" onsubmit="postAlert(event)">
+            <input type="text" class="compose-input" id="alertTitle" placeholder="Alert title…" required />
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+              <select class="compose-select" id="alertType">
+                <option value="info">ℹ️ Information</option>
+                <option value="delay">⏱️ OPD Delay</option>
+                <option value="closure">🚧 Temporary Closure</option>
+                <option value="emergency">🚨 Emergency</option>
+              </select>
+              <select class="compose-select" id="alertDept">
+                <option value="All Departments">All Departments</option>
+              </select>
+            </div>
+            <textarea class="compose-textarea" id="alertMessage" placeholder="Describe the alert…" required></textarea>
+            <div style="display:flex;justify-content:flex-end;">
+              <button type="submit" class="btn btn-primary">
+                Broadcast Alert →
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Alerts list -->
+        <div class="alerts-list" id="alertsList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- RIGHT: Sidebar -->
+      <div class="alerts-sidebar">
+
+        <!-- Emergency line -->
+        <div class="emergency-call-card">
+          <div class="emergency-call-title">Hospital Emergency Line</div>
+          <div class="emergency-call-sub">24/7 · Immediate medical assistance</div>
+          <div class="emergency-call-number">102 / 1800-102</div>
+          <button class="emergency-call-btn" onclick="triggerEmergencyPopup()">
+            🚨 Trigger Code Alert
+          </button>
+        </div>
+
+        <!-- Alert stats -->
+        <div class="alert-sidebar-card">
+          <div class="alert-sidebar-header">
+            <div class="alert-sidebar-title">Alert Summary</div>
+            <div class="alert-sidebar-sub">Today's overview</div>
+          </div>
+          <div class="alert-sidebar-body">
+            <div class="alert-stats-grid">
+              <div class="alert-stat-box critical">
+                <div class="alert-stat-num" id="statCritical">2</div>
+                <div class="alert-stat-label">Critical</div>
+              </div>
+              <div class="alert-stat-box">
+                <div class="alert-stat-num" id="statTotal">6</div>
+                <div class="alert-stat-label">Total Today</div>
+              </div>
+              <div class="alert-stat-box">
+                <div class="alert-stat-num" id="statOpen">5</div>
+                <div class="alert-stat-label">Active</div>
+              </div>
+              <div class="alert-stat-box">
+                <div class="alert-stat-num">1</div>
+                <div class="alert-stat-label">Resolved</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dept status -->
+        <div class="alert-sidebar-card">
+          <div class="alert-sidebar-header">
+            <div class="alert-sidebar-title">Department Status</div>
+            <div class="alert-sidebar-sub">Current operational status</div>
+          </div>
+          <div class="alert-sidebar-body">
+            <div class="dept-status-list" id="deptStatusList">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick links -->
+        <div class="alert-sidebar-card">
+          <div class="alert-sidebar-header">
+            <div class="alert-sidebar-title" style="font-size: 1.25rem;">Quick Links</div>
+          </div>
+          <div class="alert-sidebar-body" style="display:flex;flex-direction:column;gap:1rem; padding: 1.5rem;">
+            
+            <a href="queue.html" style="display:flex; align-items:center; justify-content:center; background: var(--forest); color: #fff; font-size: 1rem; font-weight: 700; font-family: var(--font-sans); padding: 1rem; border-radius: 12px; border: 2px solid var(--forest); box-shadow: 0 8px 16px rgba(26,58,42,0.2); text-decoration: none; width: 100%; box-sizing: border-box; transition: transform 0.2s;">
+              <div style="display:flex; align-items:center; justify-content:flex-start; gap:0.75rem; width: 215px;">
+                <img src="website-dashboard.png" alt="Queue" style="width: 24px; height: 24px; object-fit: contain; flex-shrink: 0;">
+                <span style="text-align: left;">Live Queue Dashboard</span>
+              </div>
+            </a>
+            
+            <a href="departments.html" style="display:flex; align-items:center; justify-content:center; background: #fff; color: var(--forest); font-size: 1rem; font-weight: 700; font-family: var(--font-sans); padding: 1rem; border-radius: 12px; border: 2px solid var(--forest); text-decoration: none; width: 100%; box-sizing: border-box; transition: background 0.2s;">
+              <div style="display:flex; align-items:center; justify-content:flex-start; gap:0.75rem; width: 215px;">
+                <img src="hospital.png" alt="Departments" style="width: 24px; height: 24px; object-fit: contain; flex-shrink: 0;">
+                <span style="text-align: left;">Browse Departments</span>
+              </div>
+            </a>
+            
+            <a href="index.html" style="display:flex; align-items:center; justify-content:center; background: #fff; color: var(--forest); font-size: 1rem; font-weight: 700; font-family: var(--font-sans); padding: 1rem; border-radius: 12px; border: 2px solid var(--forest); text-decoration: none; width: 100%; box-sizing: border-box; transition: background 0.2s;">
+              <div style="display:flex; align-items:center; justify-content:flex-start; gap:0.75rem; width: 215px;">
+                <img src="home (2).png" alt="Home" style="width: 24px; height: 24px; object-fit: contain; flex-shrink: 0;">
+                <span style="text-align: left;">Back to Home</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- EMERGENCY POPUP MODAL -->
+<div class="emergency-modal-overlay" id="emergencyModal" role="alertdialog" aria-modal="true" aria-live="assertive">
+  <div class="emergency-modal-box">
+    <div class="emergency-modal-header">
+      <div class="emergency-modal-icon" id="emModalIcon">🚨</div>
+      <div>
+        <div class="emergency-modal-title" id="emModalTitle">Code Blue Alert</div>
+        <div class="emergency-modal-subtitle" id="emModalSub">Cardiac ICU · Ward 3B</div>
+      </div>
+      <button class="emergency-modal-close" onclick="closeEmergencyModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="emergency-modal-body">
+      <div class="emergency-alert-content" id="emModalMessage">
+        Resuscitation team required in Cardiac ICU, Ward 3B immediately. All non-emergency procedures suspended in the area. Medical staff report to Ward 3B immediately.
+      </div>
+      <div class="emergency-modal-meta" id="emModalMeta">
+        <div class="em-meta-box">
+          <div class="em-meta-label">Priority</div>
+          <div class="em-meta-value" style="color:#b91c1c;">🔴 Critical</div>
+        </div>
+        <div class="em-meta-box">
+          <div class="em-meta-label">Affected Area</div>
+          <div class="em-meta-value">Cardiology</div>
+        </div>
+        <div class="em-meta-box">
+          <div class="em-meta-label">Time Issued</div>
+          <div class="em-meta-value" id="emModalTime">Just now</div>
+        </div>
+        <div class="em-meta-box">
+          <div class="em-meta-label">Action Required</div>
+          <div class="em-meta-value" style="color:#b91c1c;">Yes — Immediate</div>
+        </div>
+      </div>
+      <div class="emergency-modal-footer">
+        <button class="btn btn-secondary" onclick="closeEmergencyModal()">Dismiss</button>
+        <button class="btn" style="background:#b91c1c;color:#fff;" onclick="acknowledgeAlert()">
+          ✓ Acknowledge Alert
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer-new" id="footer">
+
+  <div class="footer-wave-wrap" aria-hidden="true" style="background: transparent;">
+    <svg class="footer-wave-svg" viewBox="0 0 1440 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,40 C180,90 360,10 540,55 C720,100 900,20 1080,60 C1260,100 1360,30 1440,50 L1440,110 L0,110 Z"
+            fill="#2c5c42" opacity="0.45"/>
+      <path d="M0,60 C200,10 400,90 600,45 C800,0 1000,80 1200,40 C1320,18 1390,65 1440,55 L1440,110 L0,110 Z"
+            fill="#1a3a2a" opacity="0.7"/>
+      <path d="M0,75 C240,30 480,100 720,60 C960,20 1200,85 1440,50 L1440,110 L0,110 Z"
+            fill="#0f2318"/>
+    </svg>
+  </div>
+
+  <div class="footer-new-body">
+
+    <div class="ft-top">
+      <div class="ft-brand">
+        <a href="index.html" class="ft-logo-link" aria-label="MediQueue home">
+          <div class="ft-logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
+              <path d="M12 8v4l3 3"/>
+            </svg>
+          </div>
+          <span class="ft-logo-text">Medi<em>Queue</em>®</span>
+        </a>
+      </div>
+
+      <nav class="ft-nav" aria-label="Footer links">
+        <span class="ft-nav-bracket">[</span>
+        <div class="ft-nav-links">
+          <a href="index.html">HOME</a>
+          <a href="departments.html">DEPARTMENTS</a>
+          <a href="queue.html">LIVE QUEUE</a>
+          <a href="alerts.html">ALERTS</a>
+          <a href="help.html">HELP</a>
+          <a href="doctor-login.html">DOCTOR LOGIN</a>
+        </div>
+        <span class="ft-nav-bracket">]</span>
+      </nav>
+
+      <div class="ft-newsletter">
+        <div class="ft-newsletter-heading">
+          <span>SIGN UP</span>
+          <span>TO OUR</span>
+          <span class="ft-nl-accent">NEWSLETTER</span>
+        </div>
+        <form class="ft-nl-form" onsubmit="handleNewsletterSubmit(event)">
+          <input type="email" class="ft-nl-input" placeholder="YOUR EMAIL" aria-label="Email address" required />
+          <button type="submit" class="ft-nl-btn" aria-label="Subscribe">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="ft-giant-wrap" aria-hidden="true">
+      <span class="ft-giant-text">MediQueue</span>
+    </div>
+
+    <div class="ft-bottom">
+      <div class="ft-bottom-copy">
+        <span>© MEDIQUEUE / 2026</span>
+        <span>COLLEGE FINAL YEAR PROJECT</span>
+      </div>
+      <div class="ft-bottom-legal">
+        <a href="#">PRIVACY POLICY</a>
+        <a href="#">TERMS OF USE</a>
+        <a href="#">ACCESSIBILITY</a>
+        <a href="#">HELP CENTRE</a>
+      </div>
+      <div class="ft-bottom-right">
+        <div class="ft-socials">
+          <a href="#" class="ft-social-link">INSTAGRAM</a>
+          <a href="#" class="ft-social-link">LINKEDIN</a>
+        </div>
+        <a href="mailto:support@mediqueue.in" class="ft-email">SUPPORT@MEDIQUEUE.IN</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+<script>
+function handleNewsletterSubmit(e) {
+  e.preventDefault();
+  const input = e.target.querySelector('.ft-nl-input');
+  if (typeof showToast === 'function') {
+    showToast('Subscribed!', `${input.value} added to newsletter.`, '✉️');
+  } else {
+    alert(`Subscribed! ${input.value} added to newsletter.`);
+  }
+  input.value = '';
+}
+</script>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     BOOKING MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="bookingModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-box">
+    <div class="modal-header" style="position:relative;">
+      <div class="modal-header-icon">🎫</div>
+      <div>
+        <div class="modal-header-title" id="modalTitle">Book Your OPD Token</div>
+        <div class="modal-header-sub">Secure your place in the queue instantly</div>
+      </div>
+      <button class="modal-close" onclick="closeBookingModal()" aria-label="Close">✕</button>
+    </div>
+
+    <div class="modal-body" id="modalBody">
+      <form id="bookingForm" onsubmit="submitBooking(event)">
+        <div style="display:flex;flex-direction:column;gap:1.1rem;">
+
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--charcoal-mid);display:block;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase;">Full Name</label>
+            <input type="text" id="patientName" placeholder="e.g. Arjun Sharma" required
+              style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.95rem;font-family:var(--font-sans);background:var(--ivory);color:var(--charcoal);outline:none;transition:border-color .2s;"
+              onfocus="this.style.borderColor='var(--forest-mid)'"
+              onblur="this.style.borderColor='var(--border)'" />
+          </div>
+
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--charcoal-mid);display:block;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase;">Department</label>
+            <select id="deptSelect" required
+              style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.95rem;font-family:var(--font-sans);background:var(--ivory);color:var(--charcoal);outline:none;cursor:pointer;transition:border-color .2s;"
+              onfocus="this.style.borderColor='var(--forest-mid)'"
+              onblur="this.style.borderColor='var(--border)'">
+              <option value="">Select a department…</option>
+              <option value="General OPD">General OPD</option>
+              <option value="Cardiology">Cardiology</option>
+              <option value="Neurology">Neurology</option>
+              <option value="Orthopaedics">Orthopaedics</option>
+              <option value="Ophthalmology">Ophthalmology</option>
+              <option value="Dermatology">Dermatology</option>
+              <option value="Gynaecology">Gynaecology</option>
+              <option value="Paediatrics">Paediatrics</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--charcoal-mid);display:block;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase;">Token Type</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+              <label style="cursor:pointer;">
+                <input type="radio" name="tokenType" value="standard" checked style="display:none;" />
+                <div class="token-type-option" id="opt-standard" onclick="selectTokenType('standard')"
+                  style="border:2px solid var(--forest);background:rgba(44,92,66,0.05);border-radius:10px;padding:1rem;text-align:center;">
+                  <div style="font-size:1.4rem;margin-bottom:.3rem;">🎫</div>
+                  <div style="font-size:.85rem;font-weight:700;color:var(--forest);">Standard</div>
+                  <div style="font-size:.74rem;color:var(--muted);">Free · Normal queue</div>
+                </div>
+              </label>
+              <label style="cursor:pointer;">
+                <input type="radio" name="tokenType" value="fasttrack" style="display:none;" />
+                <div class="token-type-option" id="opt-fasttrack" onclick="selectTokenType('fasttrack')"
+                  style="border:2px solid var(--border);border-radius:10px;padding:1rem;text-align:center;">
+                  <div style="font-size:1.4rem;margin-bottom:.3rem;">⚡</div>
+                  <div style="font-size:.85rem;font-weight:700;color:var(--charcoal);">Fast-Track</div>
+                  <div style="font-size:.74rem;color:var(--muted);">₹150 · Priority queue</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer" style="padding:1.5rem 0 0;margin-top:1rem;">
+          <button type="button" class="btn btn-secondary" onclick="closeBookingModal()">Cancel</button>
+          <button type="submit" class="btn btn-gold">Generate Token →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div id="toast-container"></div>
+
+<script src="app.js"></script>
+<script>
+  let currentAlertFilter = 'all';
+
+  /* ── Priority config ── */
+  const PRIORITY_CONFIG = {
+    critical: { stripClass: 'strip-critical', iconClass: 'icon-critical', badgeClass: 'pb-critical', label: 'Critical' },
+    high:     { stripClass: 'strip-high',     iconClass: 'icon-high',     badgeClass: 'pb-high',     label: 'High' },
+    medium:   { stripClass: 'strip-medium',   iconClass: 'icon-medium',   badgeClass: 'pb-medium',   label: 'Medium' },
+    low:      { stripClass: 'strip-low',      iconClass: 'icon-low',      badgeClass: 'pb-low',      label: 'Info' },
+  };
+
+  /* ── Render alerts ── */
+  /* ── Custom Premium Icons Mapping ── */
+  const CUSTOM_ICONS = {
+    emergency: '<img src="emergency-alert.png" style="width: 24px; height: 24px; object-fit: contain;">',
+    delay: '<img src="clock-icon.png" style="width: 24px; height: 24px; object-fit: contain;">',
+    closure: '<img src="close.png" style="width: 24px; height: 24px; object-fit: contain;">',
+    info: '<img src="electric-flash.png" style="width: 24px; height: 24px; object-fit: contain;">'
+  };
+
+  /* ── Render alerts ── */
+  function renderAlerts() {
+    const list = document.getElementById('alertsList');
+    if (!list) return;
+
+    let filtered = MQ.alerts;
+    if (currentAlertFilter !== 'all') {
+      filtered = MQ.alerts.filter(a => a.type === currentAlertFilter);
+    }
+
+    if (filtered.length === 0) {
+      list.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--muted);">
+        <div style="font-size:2.5rem;margin-bottom:.75rem;">✅</div>
+        <div style="font-size:1rem;font-weight:600;">No alerts in this category.</div>
+      </div>`;
+      return;
+    }
+
+    list.innerHTML = filtered.map(alert => {
+      const pc = PRIORITY_CONFIG[alert.priority] || PRIORITY_CONFIG.low;
+      // Pulls your custom PNG based on the alert type!
+      const customImgIcon = CUSTOM_ICONS[alert.type] || CUSTOM_ICONS.info; 
+
+      return `
+        <div class="alert-card" id="alert-${alert.id}">
+          <div class="alert-card-strip ${pc.stripClass}"></div>
+          <div class="alert-card-inner">
+            <div class="alert-card-header">
+              <div class="alert-card-title-row">
+                <div class="alert-icon-wrap ${pc.iconClass}">${customImgIcon}</div>
+                <div>
+                  <div class="alert-card-title">${alert.title}</div>
+                  <div class="alert-card-meta">
+                    <span>${timeAgo(alert.time)}</span>
+                    <span class="alert-card-meta-sep">·</span>
+                    <span>${formatTime(alert.time)}</span>
+                  </div>
+                </div>
+              </div>
+              <span class="priority-badge ${pc.badgeClass}">${pc.label}</span>
+            </div>
+            <p class="alert-card-message">${alert.message}</p>
+            <div class="alert-card-footer">
+              <div class="alert-dept-tag">
+                🏥 ${alert.affectedDept}
+              </div>
+              <div class="alert-card-actions">
+                <button class="alert-btn-sm" onclick="viewAlertDetails('${alert.id}')">
+                  View Details
+                </button>
+                ${alert.actionRequired
+                  ? `<button class="alert-btn-sm primary" onclick="acknowledgeAlertById('${alert.id}')">
+                       ✓ Acknowledge
+                     </button>`
+                  : `<button class="alert-btn-sm" onclick="dismissAlert('${alert.id}')">
+                       Dismiss
+                     </button>`
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+  /* ── Dept status list ── */
+  function renderDeptStatus() {
+    const list = document.getElementById('deptStatusList');
+    if (!list) return;
+    const sample = MQ.departments.slice(0, 8);
+    // Check if dept has a delay alert
+    const delayedDepts = MQ.alerts.filter(a => a.type === 'delay').map(a => a.affectedDept);
+
+    list.innerHTML = sample.map(d => {
+      let status = d.status === 'open' ? 'open' : 'closed';
+      if (delayedDepts.includes(d.name)) status = 'delay';
+      const labels = { open: 'Open', closed: 'Closed', delay: 'Delayed' };
+      return `
+        <div class="dept-status-row">
+          <span class="dept-status-name">${d.icon} ${d.name}</span>
+          <div class="dept-status-indicator">
+            <span class="dept-status-dot dot-${status}"></span>
+            <span>${labels[status]}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  /* ── Update tab counts ── */
+  function updateTabCounts() {
+    const counts = { all: MQ.alerts.length, emergency: 0, delay: 0, closure: 0, info: 0 };
+    MQ.alerts.forEach(a => { if (counts[a.type] !== undefined) counts[a.type]++; });
+    document.getElementById('tabAll').textContent       = counts.all;
+    document.getElementById('tabEmergency').textContent = counts.emergency;
+    document.getElementById('tabDelay').textContent     = counts.delay;
+    document.getElementById('tabClosure').textContent   = counts.closure;
+    document.getElementById('tabInfo').textContent      = counts.info;
+
+    const critical = MQ.alerts.filter(a => a.priority === 'critical').length;
+    document.getElementById('criticalCount').textContent = critical;
+    document.getElementById('totalAlerts').textContent   = `${MQ.alerts.length} total alerts today`;
+    document.getElementById('statCritical').textContent  = critical;
+    document.getElementById('statTotal').textContent     = MQ.alerts.length;
+    document.getElementById('statOpen').textContent      = MQ.alerts.filter(a => a.actionRequired).length + 3;
+  }
+
+  /* ── Filter ── */
+  function filterAlerts(type, btn) {
+    currentAlertFilter = type;
+    document.querySelectorAll('.alert-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    renderAlerts();
+  }
+
+  /* ── Alert actions ── */
+  function viewAlertDetails(id) {
+    const alert = MQ.alerts.find(a => a.id === id);
+    if (!alert) return;
+    const em = document.getElementById('emergencyModal');
+    document.getElementById('emModalIcon').innerHTML = CUSTOM_ICONS[alert.type] || CUSTOM_ICONS.info;
+    document.getElementById('emModalTitle').textContent   = alert.title;
+    document.getElementById('emModalSub').textContent     = `${alert.affectedDept}`;
+    document.getElementById('emModalMessage').textContent = alert.message;
+    document.getElementById('emModalTime').textContent    = formatTime(alert.time);
+
+    const meta = document.getElementById('emModalMeta');
+    const pc = PRIORITY_CONFIG[alert.priority] || PRIORITY_CONFIG.low;
+    const priorityDot = { critical: '🔴', high: '🟠', medium: '🟡', low: '🟢' };
+    meta.children[0].querySelector('.em-meta-value').textContent = `${priorityDot[alert.priority] || '🔵'} ${pc.label}`;
+    meta.children[0].querySelector('.em-meta-value').style.color = alert.priority === 'critical' ? '#b91c1c' : 'var(--charcoal)';
+    meta.children[1].querySelector('.em-meta-value').textContent = alert.affectedDept;
+
+    em.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function dismissAlert(id) {
+    const idx = MQ.alerts.findIndex(a => a.id === id);
+    if (idx !== -1) { MQ.alerts.splice(idx, 1); }
+    renderAlerts();
+    updateTabCounts();
+    renderDeptStatus();
+    showToast('Alert Dismissed', 'The notification has been removed.', '✅');
+  }
+
+  function acknowledgeAlertById(id) {
+    const alert = MQ.alerts.find(a => a.id === id);
+    if (alert) {
+      alert.actionRequired = false;
+      alert.priority = 'low';
+    }
+    renderAlerts();
+    updateTabCounts();
+    showToast('Alert Acknowledged', 'The alert has been marked as acknowledged.', '✓');
+  }
+
+  /* ── Emergency popup ── */
+  function triggerEmergencyPopup() {
+    const critical = MQ.alerts.find(a => a.priority === 'critical') || MQ.alerts[0];
+    if (critical) viewAlertDetails(critical.id);
+    else {
+      document.getElementById('emergencyModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  function closeEmergencyModal() {
+    document.getElementById('emergencyModal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  function acknowledgeAlert() {
+    closeEmergencyModal();
+    showToast('Alert Acknowledged', 'Your response has been logged.', '✓');
+  }
+
+  document.getElementById('emergencyModal').addEventListener('click', function(e) {
+    if (e.target === this) closeEmergencyModal();
+  });
+
+  /* ── Post new alert ── */
+  function populateAlertDeptSelect() {
+    const sel = document.getElementById('alertDept');
+    MQ.departments.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d.name;
+      opt.textContent = `${d.icon} ${d.name}`;
+      sel.appendChild(opt);
+    });
+  }
+
+  function postAlert(e) {
+    e.preventDefault();
+    const title   = document.getElementById('alertTitle').value.trim();
+    const type    = document.getElementById('alertType').value;
+    const dept    = document.getElementById('alertDept').value;
+    const message = document.getElementById('alertMessage').value.trim();
+    if (!title || !message) return;
+
+    const typeIcons   = { info: 'ℹ️', delay: '⏱️', closure: '🚧', emergency: '🚨' };
+    const typePriority = { info: 'low', delay: 'medium', closure: 'medium', emergency: 'critical' };
+
+    const newAlert = {
+      id: 'A' + (MQ.alerts.length + 100),
+      type, title, message,
+      time: new Date(),
+      icon: typeIcons[type] || 'ℹ️',
+      priority: typePriority[type] || 'low',
+      affectedDept: dept,
+      actionRequired: type === 'emergency',
+    };
+
+    MQ.alerts.unshift(newAlert);
+
+    // reset form
+    document.getElementById('alertTitle').value   = '';
+    document.getElementById('alertMessage').value = '';
+
+    renderAlerts();
+    updateTabCounts();
+    renderDeptStatus();
+    showToast('Alert Posted', `"${title}" has been broadcast.`, typeIcons[type]);
+
+    if (type === 'emergency') {
+      setTimeout(() => viewAlertDetails(newAlert.id), 600);
+    }
+  }
+
+  /* ── Auto-simulate new alerts every 45s ── */
+  const AUTO_ALERTS = [
+    { type: 'info',    title: 'Pharmacy Counter B now open', message: 'Pharmacy Counter B (Ground Floor) has reopened after servicing. Normal operations resumed.', dept: 'All Departments', priority: 'low', icon: 'ℹ️' },
+    { type: 'delay',   title: 'Radiology — 10-min delay', message: 'Radiology scans are delayed by approximately 10 minutes due to equipment calibration. We apologise for the inconvenience.', dept: 'Radiology', priority: 'medium', icon: '⏱️' },
+    { type: 'info',    title: 'Blood Donation Camp — Hall A', message: 'A blood donation camp is being hosted in Conference Hall A until 5:00 PM. Volunteers are welcome.', dept: 'All Departments', priority: 'low', icon: '🩸' },
+  ];
+  let autoAlertIdx = 0;
+  setInterval(() => {
+    const a = AUTO_ALERTS[autoAlertIdx % AUTO_ALERTS.length];
+    autoAlertIdx++;
+    const newA = {
+      id: 'AUTO' + Date.now(),
+      type: a.type,
+      title: a.title,
+      message: a.message,
+      time: new Date(),
+      icon: a.icon,
+      priority: a.priority,
+      affectedDept: a.dept,
+      actionRequired: false,
+    };
+    MQ.alerts.push(newA);
+    renderAlerts();
+    updateTabCounts();
+    showToast('New Alert', a.title, a.icon, 5000);
+  }, 45000);
+
+  /* ── Mobile nav ── */
+  document.getElementById('mobileToggle').addEventListener('click', function() {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+
+  /* ── Init ── */
+  populateAlertDeptSelect();
+  renderAlerts();
+  renderDeptStatus();
+  updateTabCounts();
+
+  // Auto-show critical alert popup after 3 seconds for demo effect
+  setTimeout(() => {
+    const firstCritical = MQ.alerts.find(a => a.priority === 'critical');
+    if (firstCritical) viewAlertDetails(firstCritical.id);
+  }, 3000);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeEmergencyModal();
+  });
+</script>
+</body>
+</html>

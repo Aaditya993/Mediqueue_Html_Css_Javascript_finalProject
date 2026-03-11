@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Help & FAQs — MediQueue</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── Help page specific ── */
+    .help-hero {
+      background: var(--cream);
+      padding: 4.5rem 0 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .help-hero::before {
+      content: '';
+      position: absolute;
+      top: -120px; right: -160px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .help-hero-inner {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .help-hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 700;
+      color: var(--forest);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+    .help-hero-sub {
+      font-size: 1rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+      max-width: 500px;
+      line-height: 1.75;
+    }
+    .help-search-wrap {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.15rem 0.15rem 0.15rem 1rem;
+      box-shadow: var(--shadow-sm);
+      gap: 0.5rem;
+      min-width: 320px;
+    }
+    .help-search-wrap input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-family: var(--font-sans);
+      font-size: 0.92rem;
+      color: var(--charcoal);
+      background: transparent;
+    }
+    .help-search-wrap button {
+      background: var(--forest);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.6rem 1.3rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .help-search-wrap button:hover { background: var(--forest-mid); }
+
+    /* ── Stat strip ── */
+    .help-stats-strip {
+      background: var(--forest);
+      padding: 2rem 0;
+    }
+    .help-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+    .help-stat-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0 2.5rem;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    .help-stat-item:last-child { border-right: none; }
+    .help-stat-icon {
+      font-size: 1.75rem;
+      flex-shrink: 0;
+    }
+    .help-stat-value {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      line-height: 1;
+    }
+    .help-stat-label {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.5);
+      margin-top: 0.2rem;
+    }
+
+    /* ── Main layout ── */
+    .help-main {
+      background: var(--ivory);
+      padding: 3.5rem 0 5.5rem;
+    }
+    .help-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    /* ── Sidebar nav ── */
+    .help-sidebar {
+      position: sticky;
+      top: calc(var(--navbar-h) + 1.5rem);
+    }
+    .help-sidebar-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .help-sidebar-header {
+      padding: 1rem 1.25rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--cream);
+    }
+    .help-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.9rem 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--charcoal-mid);
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: all var(--transition);
+      text-decoration: none;
+    }
+    .help-nav-item:last-child { border-bottom: none; }
+    .help-nav-item:hover, .help-nav-item.active {
+      background: rgba(44,92,66,0.06);
+      color: var(--forest);
+      font-weight: 600;
+    }
+    .help-nav-icon {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      width: 22px;
+      text-align: center;
+    }
+    .help-contact-card {
+      background: var(--forest);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      margin-top: 1.25rem;
+    }
+    .help-contact-title {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+    .help-contact-desc {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+    }
+    .help-contact-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: var(--gold);
+      color: var(--charcoal);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background var(--transition);
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      font-family: var(--font-sans);
+    }
+    .help-contact-btn:hover { background: var(--gold-light); }
+
+    /* ── Category cards ── */
+    .help-categories-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 3rem;
+    }
+    .help-cat-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.75rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .help-cat-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-3px);
+      border-color: var(--forest-light);
+    }
+    .help-cat-icon {
+      font-size: 2.2rem;
+      margin-bottom: 0.75rem;
+    }
+    .help-cat-title {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--forest);
+      margin-bottom: 0.4rem;
+    }
+    .help-cat-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .help-cat-count {
+      display: inline-block;
+      background: rgba(44,92,66,0.1);
+      color: var(--forest-mid);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+      margin-top: 0.6rem;
+    }
+
+    /* ── FAQ Section ── */
+    .faq-section-title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--forest);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .faq-section-title span {
+      font-size: 1.3rem;
+    }
+    .faq-group {
+      margin-bottom: 2.5rem;
+    }
+    .faq-item {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+      transition: box-shadow var(--transition);
+    }
+    .faq-item.open {
+      box-shadow: var(--shadow-sm);
+    }
+    .faq-question {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      gap: 1rem;
+      user-select: none;
+    }
+    .faq-question-text {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--charcoal);
+      line-height: 1.4;
+    }
+    .faq-chevron {
+      width: 28px; height: 28px;
+      background: var(--cream);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform var(--transition), background var(--transition);
+    }
+    .faq-item.open .faq-chevron {
+      transform: rotate(180deg);
+      background: var(--forest);
+    }
+    .faq-item.open .faq-chevron svg { stroke: #fff; }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    .faq-item.open .faq-answer {
+      max-height: 500px;
+    }
+    .faq-answer-inner {
+      padding: 0 1.5rem 1.5rem;
+      font-size: 0.9rem;
+      color: var(--charcoal-mid);
+      line-height: 1.8;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+    .faq-answer-inner a {
+      color: var(--forest-mid);
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .faq-tag {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 100px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-right: 0.5rem;
+      flex-shrink: 0;
+    }
+    .faq-tag-token    { background: rgba(44,92,66,0.1); color: var(--forest-mid); }
+    .faq-tag-payment  { background: rgba(201,168,76,0.15); color: #9a7a28; }
+    .faq-tag-queue    { background: rgba(44,92,122,0.1); color: #2c3a7a; }
+    .faq-tag-general  { background: rgba(120,120,110,0.1); color: var(--muted); }
+
+    /* ── Video guides ── */
+    .guides-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+    .guide-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: all var(--transition);
+      cursor: pointer;
+    }
+    .guide-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .guide-thumb {
+      height: 130px;
+      background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .guide-thumb-emoji {
+      font-size: 3rem;
+      opacity: 0.35;
+    }
+    .guide-play-btn {
+      position: absolute;
+      width: 44px; height: 44px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+    .guide-duration {
+      position: absolute;
+      bottom: 0.6rem;
+      right: 0.75rem;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+    }
+    .guide-body {
+      padding: 1rem 1.25rem;
+    }
+    .guide-title {
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--forest);
+      margin-bottom: 0.3rem;
+    }
+    .guide-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Contact options ── */
+    .contact-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+    .contact-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.75rem 1.5rem;
+      text-align: center;
+      transition: all var(--transition);
+    }
+    .contact-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+      border-color: var(--forest-light);
+    }
+    .contact-card-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+    .contact-card-title {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--forest);
+      margin-bottom: 0.4rem;
+    }
+    .contact-card-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 1.25rem;
+    }
+    .contact-card-avail {
+      font-size: 0.75rem;
+      color: var(--forest-mid);
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .help-layout { grid-template-columns: 1fr; }
+      .help-sidebar { position: static; }
+      .help-categories-grid { grid-template-columns: repeat(3, 1fr); }
+      .help-stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .contact-cards-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .help-categories-grid { grid-template-columns: repeat(2, 1fr); }
+      .guides-grid { grid-template-columns: 1fr; }
+      .contact-cards-grid { grid-template-columns: 1fr; }
+      .help-stats-grid { grid-template-columns: 1fr; }
+      .help-stat-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 1rem 1.5rem; }
+      .help-stat-item:last-child { border-bottom: none; }
+    }
+
+    /* ── BULLETPROOF ICON CENTERING ── */
+    .help-stat-icon,
+    .help-cat-icon,
+    .contact-card-icon,
+    .help-nav-icon {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 100%; /* Ensures the box spans the whole width so it can center properly */
+    }
+
+    /* Double protection for the larger cards */
+    .help-cat-icon img,
+    .contact-card-icon img {
+      margin: 0 auto;
+      display: block;
+    }
+    
+    /* Reset width for the sidebar and stat icons so they don't stretch */
+    .help-stat-icon,
+    .help-nav-icon {
+      width: auto; 
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" role="navigation">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
+          <path d="M12 8v4l3 3"/>
+        </svg>
+      </div>
+      <span class="nav-logo-text">Medi<span>Queue</span></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-dropdown">
+        <button class="nav-dropdown-toggle">Browse Departments
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu" role="menu">
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="human-heart.png" alt="Cardio" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>Cardiology</strong>
+              <small>Heart &amp; vascular care</small>
+            </div>
+          </a>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="brain4.png" alt="Neuro" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>Neurology</strong>
+              <small>Brain &amp; nervous system</small>
+            </div>
+          </a>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="bone.png" alt="Ortho" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>Orthopaedics</strong>
+              <small>Bones, joints &amp; spine</small>
+            </div>
+          </a>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="shampoo.png" alt="General" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>General OPD</strong>
+              <small>General consultations</small>
+            </div>
+          </a>
+
+          <div class="nav-divider"></div>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="hospital.png" alt="All" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>View All Departments</strong>
+              <small>12 departments available</small>
+            </div>
+          </a>
+        </div>
+      </li>
+      <li><a href="queue.html" class="nav-link">Live Queue</a></li>
+      <li><a href="alerts.html" class="nav-link">Alerts</a></li>
+      <li><a href="help.html" class="nav-link active">Help</a></li>
+      <li><a href="doctor-login.html" class="nav-link">Doctor Login</a></li>
+      <li><a href="queue.html"><button class="btn-book-token">Book Token</button></a></li>
+    </ul>
+    <button class="nav-mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+
+<!-- HERO -->
+<section class="help-hero">
+
+  <img src="doctor help.png" alt="" aria-hidden="true"
+       style="position: absolute; 
+              bottom: -10%; 
+              left: 55%; 
+              transform: translateX(-50%); 
+              height: 120%; 
+              width: auto; 
+              z-index: 1; 
+              pointer-events: none; 
+              opacity: 0.9;">
+
+  <div class="container" style="position: relative; z-index: 2;">
+  <div class="container">
+    <div class="help-hero-inner">
+      <div>
+        <div class="section-label">Help Centre</div>
+        <h1 class="help-hero-title">How can we<br>help you today?</h1>
+        <p class="help-hero-sub">Find answers about booking tokens, managing queues, payments, and more. Can't find what you need? Our support team is here.</p>
+      </div>
+      <div class="help-search-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" id="helpSearch" placeholder="Search help articles…" oninput="searchHelp(this.value)" />
+        <button onclick="searchHelp(document.getElementById('helpSearch').value)">Search</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<div class="help-stats-strip">
+  <div class="container">
+    <div class="help-stats-grid">
+      
+      <div class="help-stat-item">
+        <div class="help-stat-icon">
+          <img src="books.png" alt="Articles" style="width: 32px; height: 32px; object-fit: contain;">
+        </div>
+        <div>
+          <div class="help-stat-value">48</div>
+          <div class="help-stat-label">Help articles</div>
+        </div>
+      </div>
+
+      <div class="help-stat-item">
+        <div class="help-stat-icon">
+          <img src="clock-icon.png" alt="Time" style="width: 32px; height: 32px; object-fit: contain;">
+        </div>
+        <div>
+          <div class="help-stat-value">&lt; 2 min</div>
+          <div class="help-stat-label">Avg. read time</div>
+        </div>
+      </div>
+
+      <div class="help-stat-item">
+        <div class="help-stat-icon">
+          <img src="message (1).png" alt="Chat" style="width: 32px; height: 32px; object-fit: contain;">
+        </div>
+        <div>
+          <div class="help-stat-value">24/7</div>
+          <div class="help-stat-label">Chat support</div>
+        </div>
+      </div>
+
+      <div class="help-stat-item">
+        <div class="help-stat-icon">
+          <img src="star.png" alt="Rating" style="width: 32px; height: 32px; object-fit: contain;">
+        </div>
+        <div>
+          <div class="help-stat-value">98%</div>
+          <div class="help-stat-label">Resolution rate</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- MAIN CONTENT -->
+<section class="help-main">
+  <div class="container">
+    <div class="help-layout">
+
+      <!-- ── SIDEBAR ── -->
+      <aside class="help-sidebar">
+        <div class="help-sidebar-card">
+          <div class="help-sidebar-header">Topics</div>
+          <a class="help-nav-item active" onclick="scrollToSection('tokens')">
+            <span class="help-nav-icon"><img src="id-token.png" style="width: 18px; height: 18px; object-fit: contain;"></span> Token Booking
+          </a>
+          <a class="help-nav-item" onclick="scrollToSection('queue')">
+            <span class="help-nav-icon"><img src="statistics.png" style="width: 18px; height: 18px; object-fit: contain;"></span> Queue & Wait Times
+          </a>
+          <a class="help-nav-item" onclick="scrollToSection('payments')">
+            <span class="help-nav-icon"><img src="credit-card.png" style="width: 18px; height: 18px; object-fit: contain;"></span> Payments & Fees
+          </a>
+          <a class="help-nav-item" onclick="scrollToSection('account')">
+            <span class="help-nav-icon"><img src="person-account.png" style="width: 18px; height: 18px; object-fit: contain;"></span> Patient Account
+          </a>
+          <a class="help-nav-item" onclick="scrollToSection('technical')">
+            <span class="help-nav-icon"><img src="settings (1).png" style="width: 18px; height: 18px; object-fit: contain;"></span> Technical Issues
+          </a>
+          <a class="help-nav-item" onclick="scrollToSection('contact')">
+            <span class="help-nav-icon"><img src="telephone.png" style="width: 18px; height: 18px; object-fit: contain;"></span> Contact Support
+          </a>
+        </div>
+
+        <div class="help-contact-card">
+          <div class="help-contact-title">Still need help?</div>
+          <div class="help-contact-desc">Our support staff are available Monday – Saturday, 8 AM to 8 PM.</div>
+          <button class="help-contact-btn" onclick="scrollToSection('contact')">
+            <img src="telephone.png" alt="Phone" style="width: 18px; height: 18px; object-fit: contain;"> Contact Us
+          </button>
+        </div>
+      </aside>
+
+      <!-- ── MAIN BODY ── -->
+      <div>
+
+        <!-- Category cards -->
+        <div class="help-categories-grid">
+          <div class="help-cat-card" onclick="scrollToSection('tokens')">
+            <div class="help-cat-icon"><img src="id-token.png" style="width: 40px; height: 40px; object-fit: contain;"></div>
+            <div class="help-cat-title">Token Booking</div>
+            <div class="help-cat-desc">How to book, cancel, or transfer your OPD token.</div>
+            <div class="help-cat-count">12 articles</div>
+          </div>
+          <div class="help-cat-card" onclick="scrollToSection('queue')">
+            <div class="help-cat-icon"><img src="statistics.png" style="width: 40px; height: 40px; object-fit: contain;"></div>
+            <div class="help-cat-title">Queue & Waits</div>
+            <div class="help-cat-desc">Understanding live queue status and wait time estimates.</div>
+            <div class="help-cat-count">9 articles</div>
+          </div>
+          <div class="help-cat-card" onclick="scrollToSection('payments')">
+            <div class="help-cat-icon"><img src="credit-card.png" style="width: 40px; height: 40px; object-fit: contain;"></div>
+            <div class="help-cat-title">Payments & Fees</div>
+            <div class="help-cat-desc">Consultation fees, fast-track pricing, and refund policy.</div>
+            <div class="help-cat-count">11 articles</div>
+          </div>
+          <div class="help-cat-card" onclick="scrollToSection('account')">
+            <div class="help-cat-icon"><img src="person-account.png" style="width: 40px; height: 40px; object-fit: contain;"></div>
+            <div class="help-cat-title">Patient Account</div>
+            <div class="help-cat-desc">Manage your profile, visit history, and notifications.</div>
+            <div class="help-cat-count">8 articles</div>
+          </div>
+          <div class="help-cat-card" onclick="scrollToSection('technical')">
+            <div class="help-cat-icon"><img src="settings (1).png" style="width: 40px; height: 40px; object-fit: contain;"></div>
+            <div class="help-cat-title">Technical Issues</div>
+            <div class="help-cat-desc">Troubleshoot app errors, display issues, and more.</div>
+            <div class="help-cat-count">8 articles</div>
+          </div>
+          <div class="help-cat-card" onclick="scrollToSection('contact')">
+            <div class="help-cat-icon"><img src="telephone.png" style="width: 40px; height: 40px; object-fit: contain;"></div>
+            <div class="help-cat-title">Contact Support</div>
+            <div class="help-cat-desc">Reach our team by phone, chat, or visit the help desk.</div>
+            <div class="help-cat-count">Instant</div>
+          </div>
+        </div>
+
+        <!-- Quick guides -->
+        <div style="margin-bottom:2.5rem;">
+          <h2 class="faq-section-title"><span><img src="video-play-button-1.png" style="width: 24px;"></span> Quick Video Guides</h2>
+         <div class="guides-grid">
+            
+            <div class="guide-card">
+              <div class="guide-thumb" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://i.pinimg.com/1200x/c5/d5/b4/c5d5b46b5ea40b6e9224a596ee87fc0c.jpg') 50% 25%/cover no-repeat;">
+                <div class="guide-play-btn">
+                  <img src="play.png" alt="Play" style="width: 18px; height: 18px; object-fit: contain;">
+                </div>
+                <div class="guide-duration">1:24</div>
+              </div>
+              <div class="guide-body">
+                <div class="guide-title">How to Book Your First Token</div>
+                <div class="guide-desc">Step-by-step walkthrough from selecting a department to receiving your token confirmation.</div>
+              </div>
+            </div>
+
+            <div class="guide-card">
+              <div class="guide-thumb" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://i.pinimg.com/736x/97/64/bb/9764bb63dd834947059776dec7efc9ec.jpg') 50% 30%/cover no-repeat;">
+                <div class="guide-play-btn">
+                  <img src="play-button.png" alt="Play" style="width: 18px; height: 18px; object-fit: contain;">
+                </div>
+                <div class="guide-duration">2:05</div>
+              </div>
+              <div class="guide-body">
+                <div class="guide-title">Tracking Your Queue Position Live</div>
+                <div class="guide-desc">Learn how to read the live queue dashboard and estimate your arrival time accurately.</div>
+              </div>
+            </div>
+
+            <div class="guide-card">
+              <div class="guide-thumb" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://i.pinimg.com/1200x/50/dd/56/50dd56c2c9cb0dd152527cc0a193b792.jpg') 50% 30%/cover no-repeat;">
+                <div class="guide-play-btn">
+                  <img src="play-button.png" alt="Play" style="width: 18px; height: 18px; object-fit: contain;">
+                </div>
+                <div class="guide-duration">0:58</div>
+              </div>
+              <div class="guide-body">
+                <div class="guide-title">Upgrading to a Fast-Track Token</div>
+                <div class="guide-desc">When fast-track slots are available and how to upgrade your existing token.</div>
+              </div>
+            </div>
+
+            <div class="guide-card">
+              <div class="guide-thumb" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://i.pinimg.com/736x/91/ca/6b/91ca6b1d7b3684e9b4b6a6ec5704007c.jpg') 50% 30%/cover no-repeat;">
+                <div class="guide-play-btn">
+                  <img src="play-button.png" alt="Play" style="width: 18px; height: 18px; object-fit: contain;">
+                </div>
+                <div class="guide-duration">1:47</div>
+              </div>
+              <div class="guide-body">
+                <div class="guide-title">Understanding Consultation Fees</div>
+                <div class="guide-desc">A clear breakdown of standard fees, fast-track charges, and what's included in each bundle.</div>
+              </div>
+            </div>
+
+          </div>
+
+        <!-- FAQ: Token Booking -->
+        <div class="faq-group" id="tokens">
+          <h2 class="faq-section-title"><span><img src="id-token.png" style="width: 24px;"></span> Token Booking</h2>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span class="faq-question-text">How do I book an OPD token?</span>
+              <div class="faq-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Booking a token is simple. Navigate to <a href="queue.html">Live Queue</a> or <a href="departments.html">Departments</a>, choose your department, click <strong>"Book Token"</strong>, enter your name, select Standard or Fast-Track, and confirm. Your unique token number is generated instantly and shown on screen — no registration required.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span class="faq-question-text">What is the difference between Standard and Fast-Track tokens?</span>
+              <div class="faq-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                <strong>Standard tokens</strong> are free and enter the normal queue. <strong>Fast-Track tokens</strong> (⚡) are a paid upgrade that places you ahead of standard queue patients — ideal when you have limited time or need priority consultation. Fast-Track slots are limited per session. The additional fee varies by department and is shown before you confirm.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span class="faq-question-text">Can I book a token for someone else?</span>
+              <div class="faq-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Yes. When booking, enter the patient's name in the name field. The token will be issued in that name. Please ensure the patient arrives at the hospital before their token is called — tokens cannot be paused or held. You can track the queue position using the <a href="queue.html">Live Queue</a> page.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span class="faq-question-text">How do I cancel my token?</span>
+              <div class="faq-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                On the <a href="queue.html">Live Queue</a> page, find your active token in the "My Token" panel on the right sidebar and click <strong>"Cancel Token"</strong>. Cancellation is immediate. If you paid for a Fast-Track token, please refer to the Refund Policy section below. Standard tokens are free and carry no cancellation penalty.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span class="faq-question-text">What happens if I miss my turn?</span>
+              <div class="faq-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                If your token number is called and you are not present, the system automatically skips to the next patient. You have a <strong>5-minute grace window</strong> before your token expires. If you miss your slot, please visit the OPD reception desk directly — staff can re-queue you manually, subject to doctor availability.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ: Queue -->
+        <div class="faq-group" id="queue">
+          <h2 class="faq-section-title"><span><img src="statistics.png" style="width: 24px;"></span> Queue & Wait Times</h2>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span class="faq-question-text">How accurate are the wait time estimates?</span>
+              <div class="faq-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Wait times are estimates based on current queue length, average consultation duration for that department, and real-time throughput. They are updated every 30 seconds. Actual wait may vary due to emergencies, complex cases, or doctor breaks. We recommend arriving 5–10 minutes before your estimated slot.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span class="faq-question-text">How often does the queue refresh?</span>
+              <div class="faq-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                The <a href="queue.html">Live Queue</a> dashboard auto-refreshes every <strong>30 seconds</strong>. A countdown timer and progress bar on the page shows when the next refresh will occur. You can also observe the "Updated at" timestamp at the top of the queue list.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span class="faq-question-text">Why does a department show "Closed"?</span>
+              <div class="faq-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Departments may be closed due to planned maintenance, doctor unavailability, public holidays, or emergency situations. Check the <a href="alerts.html">Alerts</a> page for closure announcements with expected reopening times. Closed departments will not accept new tokens; you can check back the following working day or contact reception.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ: Payments -->
+        <div class="faq-group" id="payments">
+          <h2 class="faq-section-title"><span><img src="credit-card.png" style="width: 24px;"></span> Payments & Fees</h2>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span class="faq-question-text">Where can I see the consultation fees?</span>
+              <div class="faq-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Full consultation fees for all 12 departments are listed on the <a href="departments.html">Departments &amp; Pricing</a> page. Each department card shows the Standard fee and Fast-Track fee side by side. There are no hidden charges — the amount shown is what you pay at the counter.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span class="faq-question-text">Is there a refund if I cancel a Fast-Track token?</span>
+              <div class="faq-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Refunds for Fast-Track cancellations are processed as follows: <strong>Full refund</strong> if cancelled more than 30 minutes before your estimated slot. <strong>50% refund</strong> if cancelled within 30 minutes of your slot. <strong>No refund</strong> if you were a no-show after your token was called. Refunds are processed within 3–5 business days to your original payment method. Contact the billing counter or support team with your token ID.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span class="faq-question-text">What payment methods are accepted?</span>
+              <div class="faq-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Consultation fees are paid directly at the hospital billing counter. Accepted methods include Cash, Debit/Credit Card (Visa, Mastercard, RuPay), UPI (GPay, PhonePe, Paytm), and Net Banking. Insurance and cashless claims — please bring your insurance card and policy number to the counter for processing.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ: Account -->
+        <div class="faq-group" id="account">
+          <h2 class="faq-section-title"><span><img src="person-account.png" style="width: 24px;"></span> Patient Account</h2>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span class="faq-question-text">Do I need to create an account to book a token?</span>
+              <div class="faq-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                No account is required for basic token booking. You only need to enter your name. However, creating a patient account unlocks additional features: visit history, saved preferences, SMS/email notifications when your token is nearly due, and faster future bookings with pre-filled details.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span class="faq-question-text">Can I see my past visit history?</span>
+              <div class="faq-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Visit history (dates, departments, doctors consulted) is maintained for registered patients in their account dashboard. If you booked as a guest, your history is tied to the browser session only. For a complete medical history and records, please contact the Medical Records department at the hospital directly.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ: Technical -->
+        <div class="faq-group" id="technical">
+          <h2 class="faq-section-title"><span><img src="settings (1).png" style="width: 24px;"></span> Technical Issues</h2>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span class="faq-question-text">The queue isn't loading. What should I do?</span>
+              <div class="faq-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                First, check your internet connection. Then try a hard refresh (Ctrl+Shift+R on Windows, Cmd+Shift+R on Mac). If the issue persists, try clearing your browser cache or opening the page in a private/incognito window. If all departments show as unavailable, there may be a scheduled maintenance window — check the <a href="alerts.html">Alerts</a> page for notifications.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span class="faq-question-text">My token was booked but I can't see it on the queue page.</span>
+              <div class="faq-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Token data is stored in your browser session. If you close the tab, switch browsers, or clear browser data, the "My Token" panel may not display your booking. <strong>Your token is still valid at the hospital</strong> — note down your Token ID (e.g. MQ-GEN-260301-041) when booking and present it at the OPD reception desk if needed.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span class="faq-question-text">Is MediQueue available on mobile?</span>
+              <div class="faq-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Yes — MediQueue is fully responsive and works on all modern smartphones and tablets via your mobile browser. A dedicated mobile app for iOS and Android is currently in development and expected to launch soon. In the meantime, you can add the website to your home screen for an app-like experience.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div id="contact">
+          <h2 class="faq-section-title"><span><img src="telephone.png" style="width: 24px;"></span> Contact Support</h2>
+          <div class="contact-cards-grid">
+            <div class="contact-card">
+              <div class="contact-card-icon"><img src="telephone.png" style="width: 40px; height: 40px; object-fit: contain;"></div>
+              <div class="contact-card-title">Phone Support</div>
+              <div class="contact-card-desc">Speak directly with our patient services team for urgent issues.</div>
+              <div class="contact-card-avail">Mon–Sat · 8 AM – 8 PM</div>
+              <a href="tel:+918001234567" class="btn btn-primary" style="justify-content:center;width:100%;text-decoration:none;">
+                +91 800-123-4567
+              </a>
+            </div>
+            <div class="contact-card">
+              <div class="contact-card-icon"><img src="message (1).png" style="width: 40px; height: 40px; object-fit: contain;"></div>
+              <div class="contact-card-title">Live Chat</div>
+              <div class="contact-card-desc">Chat with our support team in real time for quick answers.</div>
+              <div class="contact-card-avail">Mon–Sun · 24 hours</div>
+              <button class="btn btn-primary" style="justify-content:center;width:100%;" onclick="showToast('Chat Opening…', 'Connecting you to a support agent.', '💬')">
+                Start Chat
+              </button>
+            </div>
+            <div class="contact-card">
+              <div class="contact-card-icon"><img src="email.png" style="width: 40px; height: 40px; object-fit: contain;"></div>
+              <div class="contact-card-title">Email Us</div>
+              <div class="contact-card-desc">For non-urgent queries or feedback. We respond within 24 hours.</div>
+              <div class="contact-card-avail">Response within 24 hours</div>
+              <a href="mailto:support@mediqueue.in" class="btn btn-secondary" style="justify-content:center;width:100%;text-decoration:none;">
+                support@mediqueue.in
+              </a>
+            </div>
+          </div>
+      
+
+          <!-- Hospital info -->
+          <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);padding:2rem;margin-top:1.5rem;">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;flex-wrap:wrap;">
+              <div>
+                <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem;">OPD Help Desk</div>
+                <div style="font-size:.9rem;color:var(--charcoal);line-height:1.75;">Ground Floor, Main Block<br>Near Lift No. 1<br>Open: 7:30 AM – 7:00 PM</div>
+              </div>
+              <div>
+                <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem;">Emergency Line</div>
+                <div style="font-size:.9rem;color:var(--charcoal);line-height:1.75;">
+                  <a href="tel:+911122334455" style="color:var(--forest-mid);font-weight:700;">+91 11 2233 4455</a><br>Available 24/7<br>For medical emergencies only
+                </div>
+              </div>
+              <div>
+                <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem;">Feedback</div>
+                <div style="font-size:.9rem;color:var(--charcoal);line-height:1.75;">We value your experience. Use the thumbs up / down on any page, or email us at <a href="mailto:feedback@mediqueue.in" style="color:var(--forest-mid);font-weight:600;">feedback@mediqueue.in</a></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end main body -->
+    </div><!-- end layout -->
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="footer-new" id="footer">
+
+  <div class="footer-wave-wrap" aria-hidden="true" style="background: transparent;">
+    <svg class="footer-wave-svg" viewBox="0 0 1440 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,40 C180,90 360,10 540,55 C720,100 900,20 1080,60 C1260,100 1360,30 1440,50 L1440,110 L0,110 Z"
+            fill="#2c5c42" opacity="0.45"/>
+      <path d="M0,60 C200,10 400,90 600,45 C800,0 1000,80 1200,40 C1320,18 1390,65 1440,55 L1440,110 L0,110 Z"
+            fill="#1a3a2a" opacity="0.7"/>
+      <path d="M0,75 C240,30 480,100 720,60 C960,20 1200,85 1440,50 L1440,110 L0,110 Z"
+            fill="#0f2318"/>
+    </svg>
+  </div>
+
+  <div class="footer-new-body">
+
+    <div class="ft-top">
+      <div class="ft-brand">
+        <a href="index.html" class="ft-logo-link" aria-label="MediQueue home">
+          <div class="ft-logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
+              <path d="M12 8v4l3 3"/>
+            </svg>
+          </div>
+          <span class="ft-logo-text">Medi<em>Queue</em>®</span>
+        </a>
+      </div>
+
+      <nav class="ft-nav" aria-label="Footer links">
+        <span class="ft-nav-bracket">[</span>
+        <div class="ft-nav-links">
+          <a href="index.html">HOME</a>
+          <a href="departments.html">DEPARTMENTS</a>
+          <a href="queue.html">LIVE QUEUE</a>
+          <a href="alerts.html">ALERTS</a>
+          <a href="help.html">HELP</a>
+          <a href="doctor-login.html">DOCTOR LOGIN</a>
+        </div>
+        <span class="ft-nav-bracket">]</span>
+      </nav>
+
+      <div class="ft-newsletter">
+        <div class="ft-newsletter-heading">
+          <span>SIGN UP</span>
+          <span>TO OUR</span>
+          <span class="ft-nl-accent">NEWSLETTER</span>
+        </div>
+        <form class="ft-nl-form" onsubmit="handleNewsletterSubmit(event)">
+          <input type="email" class="ft-nl-input" placeholder="YOUR EMAIL" aria-label="Email address" required />
+          <button type="submit" class="ft-nl-btn" aria-label="Subscribe">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="ft-giant-wrap" aria-hidden="true">
+      <span class="ft-giant-text">MediQueue</span>
+    </div>
+
+    <div class="ft-bottom">
+      <div class="ft-bottom-copy">
+        <span>© MEDIQUEUE / 2026</span>
+        <span>COLLEGE FINAL YEAR PROJECT</span>
+      </div>
+      <div class="ft-bottom-legal">
+        <a href="#">PRIVACY POLICY</a>
+        <a href="#">TERMS OF USE</a>
+        <a href="#">ACCESSIBILITY</a>
+        <a href="#">HELP CENTRE</a>
+      </div>
+      <div class="ft-bottom-right">
+        <div class="ft-socials">
+          <a href="#" class="ft-social-link">INSTAGRAM</a>
+          <a href="#" class="ft-social-link">LINKEDIN</a>
+        </div>
+        <a href="mailto:support@mediqueue.in" class="ft-email">SUPPORT@MEDIQUEUE.IN</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+<script>
+function handleNewsletterSubmit(e) {
+  e.preventDefault();
+  const input = e.target.querySelector('.ft-nl-input');
+  if (typeof showToast === 'function') {
+    showToast('Subscribed!', `${input.value} added to newsletter.`, '✉️');
+  } else {
+    alert(`Subscribed! ${input.value} added to newsletter.`);
+  }
+  input.value = '';
+}
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════
+     BOOKING MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="bookingModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-box">
+    <div class="modal-header" style="position:relative;">
+      <div class="modal-header-icon">🎫</div>
+      <div>
+        <div class="modal-header-title" id="modalTitle">Book Your OPD Token</div>
+        <div class="modal-header-sub">Secure your place in the queue instantly</div>
+      </div>
+      <button class="modal-close" onclick="closeBookingModal()" aria-label="Close">✕</button>
+    </div>
+
+    <div class="modal-body" id="modalBody">
+      <form id="bookingForm" onsubmit="submitBooking(event)">
+        <div style="display:flex;flex-direction:column;gap:1.1rem;">
+
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--charcoal-mid);display:block;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase;">Full Name</label>
+            <input type="text" id="patientName" placeholder="e.g. Arjun Sharma" required
+              style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.95rem;font-family:var(--font-sans);background:var(--ivory);color:var(--charcoal);outline:none;transition:border-color .2s;"
+              onfocus="this.style.borderColor='var(--forest-mid)'"
+              onblur="this.style.borderColor='var(--border)'" />
+          </div>
+
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--charcoal-mid);display:block;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase;">Department</label>
+            <select id="deptSelect" required
+              style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.95rem;font-family:var(--font-sans);background:var(--ivory);color:var(--charcoal);outline:none;cursor:pointer;transition:border-color .2s;"
+              onfocus="this.style.borderColor='var(--forest-mid)'"
+              onblur="this.style.borderColor='var(--border)'">
+              <option value="">Select a department…</option>
+              <option value="General OPD">General OPD</option>
+              <option value="Cardiology">Cardiology</option>
+              <option value="Neurology">Neurology</option>
+              <option value="Orthopaedics">Orthopaedics</option>
+              <option value="Ophthalmology">Ophthalmology</option>
+              <option value="Dermatology">Dermatology</option>
+              <option value="Gynaecology">Gynaecology</option>
+              <option value="Paediatrics">Paediatrics</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--charcoal-mid);display:block;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase;">Token Type</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+              <label style="cursor:pointer;">
+                <input type="radio" name="tokenType" value="standard" checked style="display:none;" />
+                <div class="token-type-option" id="opt-standard" onclick="selectTokenType('standard')"
+                  style="border:2px solid var(--forest);background:rgba(44,92,66,0.05);border-radius:10px;padding:1rem;text-align:center;">
+                  <div style="font-size:1.4rem;margin-bottom:.3rem;">🎫</div>
+                  <div style="font-size:.85rem;font-weight:700;color:var(--forest);">Standard</div>
+                  <div style="font-size:.74rem;color:var(--muted);">Free · Normal queue</div>
+                </div>
+              </label>
+              <label style="cursor:pointer;">
+                <input type="radio" name="tokenType" value="fasttrack" style="display:none;" />
+                <div class="token-type-option" id="opt-fasttrack" onclick="selectTokenType('fasttrack')"
+                  style="border:2px solid var(--border);border-radius:10px;padding:1rem;text-align:center;">
+                  <div style="font-size:1.4rem;margin-bottom:.3rem;">⚡</div>
+                  <div style="font-size:.85rem;font-weight:700;color:var(--charcoal);">Fast-Track</div>
+                  <div style="font-size:.74rem;color:var(--muted);">₹150 · Priority queue</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer" style="padding:1.5rem 0 0;margin-top:1rem;">
+          <button type="button" class="btn btn-secondary" onclick="closeBookingModal()">Cancel</button>
+          <button type="submit" class="btn btn-gold">Generate Token →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div id="toast-container" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.6rem;"></div>
+
+<script src="app.js"></script>
+<script>
+  /* ── FAQ accordion ── */
+  function toggleFaq(item) {
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  /* ── Smooth scroll to section ── */
+  function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // update sidebar active
+    document.querySelectorAll('.help-nav-item').forEach(a => a.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+  }
+
+  /* ── Search (basic highlight / filter) ── */
+  function searchHelp(query) {
+    const q = query.toLowerCase().trim();
+    if (!q) {
+      document.querySelectorAll('.faq-item').forEach(el => el.style.display = '');
+      return;
+    }
+    document.querySelectorAll('.faq-item').forEach(item => {
+      const text = item.textContent.toLowerCase();
+      item.style.display = text.includes(q) ? '' : 'none';
+    });
+  }
+
+  /* ── Mobile nav ── */
+  document.getElementById('mobileToggle').addEventListener('click', function() {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+
+  /* ── Scroll spy for sidebar ── */
+  const sections = ['tokens','queue','payments','account','technical','contact'];
+  const navItems = document.querySelectorAll('.help-nav-item');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top < 140) current = id;
+    });
+    navItems.forEach((item, i) => {
+      item.classList.toggle('active', sections[i] === current);
+    });
+  });
+</script>
+</body>
+</html>

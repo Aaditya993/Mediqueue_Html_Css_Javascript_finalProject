@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Queue Dashboard — MediQueue</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── Queue page specific ── */
+    .queue-hero {
+      background: var(--forest);
+      padding: 3.5rem 0 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .queue-hero::before {
+      content: '';
+      position: absolute;
+      bottom: -100px; right: -100px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .queue-hero-inner {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .queue-hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+    .queue-hero-sub {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.6);
+      margin-top: 0.4rem;
+    }
+    .refresh-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.5);
+      margin-top: 0.75rem;
+    }
+    .refresh-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .queue-hero-stats {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .queue-hero-stat {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.5rem;
+      min-width: 120px;
+      text-align: center;
+    }
+    .queue-hero-stat-value {
+      font-family: var(--font-serif);
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--gold-light);
+    }
+    .queue-hero-stat-label {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.5);
+      margin-top: 0.2rem;
+      font-weight: 500;
+    }
+
+    /* ── Main layout ── */
+    .queue-main {
+      background: var(--ivory);
+      padding: 3rem 0 5rem;
+    }
+    .queue-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.75rem;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 0.45rem 1rem;
+      border-radius: 100px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      color: var(--charcoal-mid);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--forest);
+      color: #fff;
+      border-color: var(--forest);
+    }
+    .filter-spacer { flex: 1; }
+    .last-updated {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .progress-bar-wrap {
+      height: 2px;
+      background: var(--cream-dark);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 0.3rem;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--gold);
+      border-radius: 2px;
+      transition: width 1s linear;
+    }
+
+    /* ── Queue cards grid ── */
+    .queue-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+    .queue-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: box-shadow var(--transition), transform var(--transition);
+    }
+    .queue-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .queue-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .queue-card-dept {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+    .queue-card-icon {
+      width: 44px; height: 44px;
+      border-radius: var(--radius-sm);
+      background: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .queue-card-dept-name {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--forest);
+    }
+    .queue-card-dept-meta {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.1rem;
+    }
+    .queue-card-body {
+      padding: 1.25rem 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+    .queue-stat-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+    .queue-stat-value {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--forest);
+      line-height: 1;
+    }
+    .queue-stat-sub {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+    /* Queue progress visual */
+    .queue-progress-section {
+      padding: 0 1.5rem 1.5rem;
+    }
+    .queue-tokens-visual {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 0.5rem;
+    }
+    .q-dot {
+      width: 10px; height: 10px;
+      border-radius: 3px;
+      background: var(--cream-dark);
+    }
+    .q-dot.served    { background: var(--forest-mid); }
+    .q-dot.current   { background: var(--gold); width: 14px; border-radius: 4px; }
+    .q-dot.waiting   { background: var(--cream-dark); }
+    .queue-card-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background: var(--cream);
+    }
+    .queue-doctor-info {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .queue-doctor-avatar {
+      width: 36px; height: 36px; /* Made slightly larger for better photo visibility */
+      border-radius: 50%;
+      background: var(--cream-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden; /* Ensures the square photo becomes a perfect circle */
+      flex-shrink: 0;
+      border: 1.5px solid var(--border); /* Adds a premium subtle border */
+    }
+    .queue-doctor-name { font-size: 0.83rem; font-weight: 600; color: var(--charcoal); }
+    .queue-doctor-room { font-size: 0.74rem; color: var(--muted); }
+    .queue-card-closed {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    .queue-card-closed .queue-card-body {
+      filter: grayscale(0.4);
+    }
+
+    /* ── Right sidebar ── */
+    .sidebar { position: sticky; top: calc(var(--navbar-h) + 1.5rem); }
+    .sidebar-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    .sidebar-card-header {
+      background: var(--forest);
+      padding: 1.1rem 1.25rem;
+    }
+    .sidebar-card-title {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .sidebar-card-sub {
+      font-size: 0.74rem;
+      color: rgba(255,255,255,0.55);
+      margin-top: 0.2rem;
+    }
+    .sidebar-card-body { padding: 1.25rem; }
+
+    /* My Token */
+    .my-token-empty {
+      text-align: center;
+      padding: 1.5rem 1rem;
+      color: var(--muted);
+      font-size: 0.875rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .my-token-empty-icon { 
+      margin-bottom: 0.75rem; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .my-token-display {
+      background: var(--forest);
+      border-radius: var(--radius-sm);
+      padding: 1.25rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .my-token-num {
+      font-family: var(--font-serif);
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      line-height: 1;
+    }
+    .my-token-id { font-size: 0.72rem; color: rgba(255,255,255,0.5); margin-top: 0.3rem; }
+    
+    .my-token-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.82rem;
+    }
+    .my-token-meta-row:last-child { border-bottom: none; }
+    .my-token-meta-label { color: var(--muted); font-weight: 500; }
+    
+    .my-token-meta-value { 
+      font-weight: 600; 
+      color: var(--charcoal); 
+      display: flex;
+      align-items: center;
+      gap: 0.4rem; /* Adds perfect spacing between icon and text */
+    }
+    
+    /* Forces ANY image inside these rows to shrink to 18px so it fits perfectly! */
+    .my-token-meta-value img {
+      width: 18px !important;
+      height: 18px !important;
+      object-fit: contain;
+    }
+
+    /* Alerts sidebar list */
+    .alert-mini-item {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .alert-mini-item:last-child { border-bottom: none; }
+    .alert-mini-icon {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+    .alert-mini-title { font-size: 0.83rem; font-weight: 600; color: var(--charcoal); }
+    .alert-mini-time  { font-size: 0.72rem; color: var(--muted); margin-top: 0.15rem; }
+
+    /* ── Token booking inline ── */
+    .book-inline-card {
+      background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 100%);
+      border-radius: var(--radius-md);
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .book-inline-card::after {
+      content: '';
+      position: absolute;
+      right: -1rem;
+      bottom: -1.5rem;
+      width: 140px;
+      height: 140px;
+      background: url('id-card-token.png') no-repeat center center;
+      background-size: contain;
+      opacity: 0.15; /* Keeps it as a subtle faded background */
+    }
+    .book-inline-title {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+    .book-inline-sub {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 1.25rem;
+    }
+    .book-inline-select {
+      width: 100%;
+      padding: 0.65rem 0.9rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      outline: none;
+      margin-bottom: 0.75rem;
+      cursor: pointer;
+    }
+    .book-inline-select option { background: var(--forest); color: #fff; }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .queue-layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+    }
+    @media (max-width: 640px) {
+      .queue-card-body { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" role="navigation">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
+          <path d="M12 8v4l3 3"/>
+        </svg>
+      </div>
+      <span class="nav-logo-text">Medi<span>Queue</span></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-dropdown">
+        <button class="nav-dropdown-toggle">Browse Departments
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu" role="menu">
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="human-heart.png" alt="Cardio" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>Cardiology</strong>
+              <small>Heart &amp; vascular care</small>
+            </div>
+          </a>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="brain4.png" alt="Neuro" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>Neurology</strong>
+              <small>Brain &amp; nervous system</small>
+            </div>
+          </a>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="bone.png" alt="Ortho" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>Orthopaedics</strong>
+              <small>Bones, joints &amp; spine</small>
+            </div>
+          </a>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="shampoo.png" alt="General" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>General OPD</strong>
+              <small>General consultations</small>
+            </div>
+          </a>
+
+          <div class="nav-divider"></div>
+
+          <a href="departments.html" class="nav-dropdown-item" role="menuitem">
+            <div class="nav-dropdown-item-icon">
+              <img src="hospital.png" alt="All" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+            <div class="nav-dropdown-item-text">
+              <strong>View All Departments</strong>
+              <small>12 departments available</small>
+            </div>
+          </a>
+        </div>
+      </li>
+      <li><a href="queue.html" class="nav-link active">Live Queue</a></li>
+      <li><a href="alerts.html" class="nav-link">Alerts</a></li>
+      <li><a href="help.html" class="nav-link">Help</a></li>
+      <li><a href="doctor-login.html" class="nav-link">Doctor Login</a></li>
+      <li><button class="btn-book-token" onclick="openSidebarBooking()">Book Token</button></li>
+    </ul>
+    <button class="nav-mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+
+<!-- QUEUE HERO -->
+<section class="queue-hero" style="position: relative; overflow: hidden;">
+
+  <img src="docpoc.png" alt="" aria-hidden="true"
+       style="position: absolute; 
+              bottom: -213px;      /* Use px to slide the image up or down */
+              left: 50%;          /* 50% puts it perfectly in the middle */
+              transform: translateX(-50%); 
+              height: 180%;       /* Adjust to make it bigger or smaller */
+              width: auto; 
+              z-index: 1;         /* Keeps it behind the text and boxes */
+              pointer-events: none; 
+              opacity: 0.85;">    
+
+  <div class="container" style="position: relative; z-index: 2;">
+    <div class="queue-hero-inner">
+      <div>
+        <div class="tag" style="margin-bottom:.75rem;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.8); display:inline-flex; align-items:center; gap:0.5rem;">
+          <img src="website-dashboard.png" alt="Live" style="width: 16px; height: 16px; object-fit: contain;"> Live Dashboard
+        </div>
+        <h1 class="queue-hero-title">OPD Queue — Live Status</h1>
+        <p class="queue-hero-sub">Real-time token queue across all active departments.</p>
+        <div class="refresh-indicator">
+          <span class="refresh-dot"></span>
+          <span id="refreshIndicator">Auto-refreshes every 30 seconds</span>
+        </div>
+        <div class="progress-bar-wrap" style="width:260px;margin-top:.5rem;">
+          <div class="progress-bar-fill" id="refreshProgressBar" style="width:100%;"></div>
+        </div>
+      </div>
+      <div class="queue-hero-stats">
+        <div class="queue-hero-stat">
+          <div class="queue-hero-stat-value" id="totalInQueue">—</div>
+          <div class="queue-hero-stat-label">In Queue Now</div>
+        </div>
+        <div class="queue-hero-stat">
+          <div class="queue-hero-stat-value" id="openDepts">—</div>
+          <div class="queue-hero-stat-label">Open Depts</div>
+        </div>
+        <div class="queue-hero-stat">
+          <div class="queue-hero-stat-value" id="avgWait">—</div>
+          <div class="queue-hero-stat-label">Avg Wait</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</section>
+
+
+<!-- MAIN CONTENT -->
+<section class="queue-main">
+  <div class="container">
+    <div class="queue-layout">
+
+      <!-- LEFT: Queue cards -->
+      <div>
+        <div class="filter-bar">
+          <button class="filter-btn active" onclick="filterQueue('all', this)">All Departments</button>
+          <button class="filter-btn" onclick="filterQueue('open', this)">Open Only</button>
+          <button class="filter-btn" onclick="filterQueue('fasttrack', this)">Fast-Track Available</button>
+          <div class="filter-spacer"></div>
+          <span class="last-updated" id="lastUpdated">Updated just now</span>
+        </div>
+
+        <div class="queue-cards-grid" id="queueCardsGrid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- RIGHT: Sidebar -->
+      <div class="sidebar">
+
+        <!-- Quick Book Token -->
+        <div class="book-inline-card">
+          <div class="book-inline-title">Book Your Token</div>
+          <div class="book-inline-sub">Secure your spot in seconds</div>
+          <select class="book-inline-select" id="sidebarDeptSelect">
+            <option value="">Select department…</option>
+          </select>
+          <div style="display:flex;gap:.5rem;">
+            <button class="btn btn-gold" style="flex:1;justify-content:center;" onclick="openSidebarBooking()">
+              Get Token →
+            </button>
+          </div>
+        </div>
+
+        <!-- My Token -->
+        <div class="sidebar-card">
+          <div class="sidebar-card-header">
+            <div class="sidebar-card-title">My Token</div>
+            <div class="sidebar-card-sub">Your current queue position</div>
+          </div>
+          <div class="sidebar-card-body" id="myTokenPanel">
+            <div class="my-token-empty">
+              <div class="my-token-empty-icon">🎫</div>
+              <div>No active token.<br>Book one to track your position.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live alerts mini -->
+        <div class="sidebar-card">
+          <div class="sidebar-card-header" style="display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <div class="sidebar-card-title">Recent Alerts</div>
+              <div class="sidebar-card-sub">Hospital-wide notifications</div>
+            </div>
+            <a href="alerts.html" style="font-size:.75rem;color:var(--gold-light);font-weight:600;">View all →</a>
+          </div>
+          <div class="sidebar-card-body" id="alertsMiniList">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- BOOKING MODAL (Queue page) -->
+<div class="modal-overlay" id="queueBookingModal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <div class="modal-header" style="position:relative;">
+      <div class="modal-header-icon">🎫</div>
+      <div>
+        <div class="modal-header-title">Book OPD Token</div>
+        <div class="modal-header-sub">Secure your queue position</div>
+      </div>
+      <button class="modal-close" onclick="closeQueueModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="queueBookingForm" onsubmit="submitQueueBooking(event)">
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--charcoal-mid);display:block;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase;">Full Name</label>
+            <input type="text" id="qPatientName" placeholder="Your full name" required
+              style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.95rem;font-family:var(--font-sans);background:var(--ivory);color:var(--charcoal);outline:none;"
+              onfocus="this.style.borderColor='var(--forest-mid)'" onblur="this.style.borderColor='var(--border)'" />
+          </div>
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--charcoal-mid);display:block;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase;">Department</label>
+            <select id="qDeptSelect" required
+              style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.95rem;font-family:var(--font-sans);background:var(--ivory);color:var(--charcoal);outline:none;cursor:pointer;"
+              onfocus="this.style.borderColor='var(--forest-mid)'" onblur="this.style.borderColor='var(--border)'">
+              <option value="">Select a department…</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--charcoal-mid);display:block;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase;">Token Type</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+              <div id="qOptStandard" onclick="selectQTokenType('standard')"
+                style="border:2px solid var(--forest);background:rgba(44,92,66,0.05);border-radius:10px;padding:.9rem;text-align:center;cursor:pointer;">
+                <div style="font-size:1.2rem;margin-bottom:.2rem;">🎫</div>
+                <div style="font-size:.82rem;font-weight:700;color:var(--forest);">Standard</div>
+                <div style="font-size:.72rem;color:var(--muted);">Free · Normal queue</div>
+              </div>
+              <div id="qOptFasttrack" onclick="selectQTokenType('fasttrack')"
+                style="border:2px solid var(--border);border-radius:10px;padding:.9rem;text-align:center;cursor:pointer;">
+                <div style="font-size:1.2rem;margin-bottom:.2rem;">⚡</div>
+                <div style="font-size:.82rem;font-weight:700;color:var(--charcoal);">Fast-Track</div>
+                <div style="font-size:.72rem;color:var(--muted);">₹150 · Priority</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.5rem;">
+          <button type="button" class="btn btn-secondary" onclick="closeQueueModal()">Cancel</button>
+          <button type="submit" class="btn btn-gold">Generate Token →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+
+<footer class="footer-new" id="footer">
+
+  <div class="footer-wave-wrap" aria-hidden="true" style="background: transparent;">
+    <svg class="footer-wave-svg" viewBox="0 0 1440 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,40 C180,90 360,10 540,55 C720,100 900,20 1080,60 C1260,100 1360,30 1440,50 L1440,110 L0,110 Z"
+            fill="#2c5c42" opacity="0.45"/>
+      <path d="M0,60 C200,10 400,90 600,45 C800,0 1000,80 1200,40 C1320,18 1390,65 1440,55 L1440,110 L0,110 Z"
+            fill="#1a3a2a" opacity="0.7"/>
+      <path d="M0,75 C240,30 480,100 720,60 C960,20 1200,85 1440,50 L1440,110 L0,110 Z"
+            fill="#0f2318"/>
+    </svg>
+  </div>
+
+  <div class="footer-new-body">
+
+    <div class="ft-top">
+      <div class="ft-brand">
+        <a href="index.html" class="ft-logo-link" aria-label="MediQueue home">
+          <div class="ft-logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
+              <path d="M12 8v4l3 3"/>
+            </svg>
+          </div>
+          <span class="ft-logo-text">Medi<em>Queue</em>®</span>
+        </a>
+      </div>
+
+      <nav class="ft-nav" aria-label="Footer links">
+        <span class="ft-nav-bracket">[</span>
+        <div class="ft-nav-links">
+          <a href="index.html">HOME</a>
+          <a href="departments.html">DEPARTMENTS</a>
+          <a href="queue.html">LIVE QUEUE</a>
+          <a href="alerts.html">ALERTS</a>
+          <a href="help.html">HELP</a>
+          <a href="doctor-login.html">DOCTOR LOGIN</a>
+        </div>
+        <span class="ft-nav-bracket">]</span>
+      </nav>
+
+      <div class="ft-newsletter">
+        <div class="ft-newsletter-heading">
+          <span>SIGN UP</span>
+          <span>TO OUR</span>
+          <span class="ft-nl-accent">NEWSLETTER</span>
+        </div>
+        <form class="ft-nl-form" onsubmit="handleNewsletterSubmit(event)">
+          <input type="email" class="ft-nl-input" placeholder="YOUR EMAIL" aria-label="Email address" required />
+          <button type="submit" class="ft-nl-btn" aria-label="Subscribe">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="ft-giant-wrap" aria-hidden="true">
+      <span class="ft-giant-text">MediQueue</span>
+    </div>
+
+    <div class="ft-bottom">
+      <div class="ft-bottom-copy">
+        <span>© MEDIQUEUE / 2026</span>
+        <span>COLLEGE FINAL YEAR PROJECT</span>
+      </div>
+      <div class="ft-bottom-legal">
+        <a href="#">PRIVACY POLICY</a>
+        <a href="#">TERMS OF USE</a>
+        <a href="#">ACCESSIBILITY</a>
+        <a href="#">HELP CENTRE</a>
+      </div>
+      <div class="ft-bottom-right">
+        <div class="ft-socials">
+          <a href="#" class="ft-social-link">INSTAGRAM</a>
+          <a href="#" class="ft-social-link">LINKEDIN</a>
+        </div>
+        <a href="mailto:support@mediqueue.in" class="ft-email">SUPPORT@MEDIQUEUE.IN</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+<script>
+function handleNewsletterSubmit(e) {
+  e.preventDefault();
+  const input = e.target.querySelector('.ft-nl-input');
+  if (typeof showToast === 'function') {
+    showToast('Subscribed!', `${input.value} added to newsletter.`, '✉️');
+  } else {
+    alert(`Subscribed! ${input.value} added to newsletter.`);
+  }
+  input.value = '';
+}
+</script>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     BOOKING MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="bookingModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-box">
+    <div class="modal-header" style="position:relative;">
+      <div class="modal-header-icon">🎫</div>
+      <div>
+        <div class="modal-header-title" id="modalTitle">Book Your OPD Token</div>
+        <div class="modal-header-sub">Secure your place in the queue instantly</div>
+      </div>
+      <button class="modal-close" onclick="closeBookingModal()" aria-label="Close">✕</button>
+    </div>
+
+    <div class="modal-body" id="modalBody">
+      <form id="bookingForm" onsubmit="submitBooking(event)">
+        <div style="display:flex;flex-direction:column;gap:1.1rem;">
+
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--charcoal-mid);display:block;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase;">Full Name</label>
+            <input type="text" id="patientName" placeholder="e.g. Arjun Sharma" required
+              style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.95rem;font-family:var(--font-sans);background:var(--ivory);color:var(--charcoal);outline:none;transition:border-color .2s;"
+              onfocus="this.style.borderColor='var(--forest-mid)'"
+              onblur="this.style.borderColor='var(--border)'" />
+          </div>
+
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--charcoal-mid);display:block;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase;">Department</label>
+            <select id="deptSelect" required
+              style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.95rem;font-family:var(--font-sans);background:var(--ivory);color:var(--charcoal);outline:none;cursor:pointer;transition:border-color .2s;"
+              onfocus="this.style.borderColor='var(--forest-mid)'"
+              onblur="this.style.borderColor='var(--border)'">
+              <option value="">Select a department…</option>
+              <option value="General OPD">General OPD</option>
+              <option value="Cardiology">Cardiology</option>
+              <option value="Neurology">Neurology</option>
+              <option value="Orthopaedics">Orthopaedics</option>
+              <option value="Ophthalmology">Ophthalmology</option>
+              <option value="Dermatology">Dermatology</option>
+              <option value="Gynaecology">Gynaecology</option>
+              <option value="Paediatrics">Paediatrics</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size:.8rem;font-weight:600;color:var(--charcoal-mid);display:block;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase;">Token Type</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+              <label style="cursor:pointer;">
+                <input type="radio" name="tokenType" value="standard" checked style="display:none;" />
+                <div class="token-type-option" id="opt-standard" onclick="selectTokenType('standard')"
+                  style="border:2px solid var(--forest);background:rgba(44,92,66,0.05);border-radius:10px;padding:1rem;text-align:center;">
+                  <div style="font-size:1.4rem;margin-bottom:.3rem;">🎫</div>
+                  <div style="font-size:.85rem;font-weight:700;color:var(--forest);">Standard</div>
+                  <div style="font-size:.74rem;color:var(--muted);">Free · Normal queue</div>
+                </div>
+              </label>
+              <label style="cursor:pointer;">
+                <input type="radio" name="tokenType" value="fasttrack" style="display:none;" />
+                <div class="token-type-option" id="opt-fasttrack" onclick="selectTokenType('fasttrack')"
+                  style="border:2px solid var(--border);border-radius:10px;padding:1rem;text-align:center;">
+                  <div style="font-size:1.4rem;margin-bottom:.3rem;">⚡</div>
+                  <div style="font-size:.85rem;font-weight:700;color:var(--charcoal);">Fast-Track</div>
+                  <div style="font-size:.74rem;color:var(--muted);">₹150 · Priority queue</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer" style="padding:1.5rem 0 0;margin-top:1rem;">
+          <button type="button" class="btn btn-secondary" onclick="closeBookingModal()">Cancel</button>
+          <button type="submit" class="btn btn-gold">Generate Token →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="app.js"></script>
+<script>
+  let currentFilter  = 'all';
+  let qTokenType     = 'standard';
+  let myActiveToken  = null;
+  let refreshSeconds = 30;
+  let secondsLeft    = 30;
+
+  /* Populate dept dropdowns */
+  /* Populate dept dropdowns */
+  function populateDeptDropdowns() {
+    const selects = [
+      document.getElementById('sidebarDeptSelect'),
+      document.getElementById('qDeptSelect')
+    ];
+    selects.forEach(sel => {
+      if (!sel) return;
+      MQ.departments.filter(d => d.status === 'open').forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.name;
+        // FIX: We removed the HTML icon here because standard dropdowns only support plain text!
+        opt.textContent = d.name; 
+        sel.appendChild(opt);
+      });
+    });
+  }
+
+  /* ── Render queue cards ── */
+  function renderQueueCards(depts) {
+    const grid = document.getElementById('queueCardsGrid');
+    if (!grid) return;
+
+    let filtered = depts;
+    if (currentFilter === 'open')      filtered = depts.filter(d => d.status === 'open');
+    if (currentFilter === 'fasttrack') filtered = depts.filter(d => d.status === 'open' && d.queue < 10);
+
+    // Update hero stats
+    const open   = depts.filter(d => d.status === 'open');
+    const total  = open.reduce((s, d) => s + d.queue, 0);
+    const avgWt  = open.length ? Math.round(open.reduce((s,d) => s + d.waitMin, 0) / open.length) : 0;
+    document.getElementById('totalInQueue').textContent = total;
+    document.getElementById('openDepts').textContent    = open.length;
+    document.getElementById('avgWait').textContent      = formatWait(avgWt);
+
+    grid.innerHTML = filtered.map(dept => {
+      const isClosed = dept.status !== 'open';
+      const maxDots  = 20;
+      const served   = Math.min(dept.serving % maxDots, maxDots);
+      const waiting  = Math.min(dept.queue, maxDots - 1);
+      let dots = '';
+      for (let i = 0; i < maxDots; i++) {
+        if (i < served)   dots += '<span class="q-dot served"></span>';
+        else if (i === served) dots += '<span class="q-dot current"></span>';
+        else if (i < served + waiting) dots += '<span class="q-dot waiting"></span>';
+        else dots += '<span class="q-dot"></span>';
+      }
+
+      const initials = dept.doctor.split(' ').map(w => w[0]).join('').replace('Dr','').trim().slice(0,2);
+      const docImg = dept.doctorImg || 'doctor2.png';
+      const waitBadgeClass = dept.waitMin <= 10 ? 'badge-green' : dept.waitMin <= 25 ? 'badge-yellow' : 'badge-red';
+
+      return `
+        <div class="queue-card ${isClosed ? 'queue-card-closed' : ''}">
+          <div class="queue-card-header">
+            <div class="queue-card-dept">
+              <div class="queue-card-icon">${dept.icon}</div>
+              <div>
+                <div class="queue-card-dept-name">${dept.name}</div>
+                <div class="queue-card-dept-meta">${dept.specialisation}</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:.5rem;align-items:center;">
+              ${isClosed
+                ? '<span class="badge badge-red badge-dot">Closed</span>'
+                : `<span class="badge ${waitBadgeClass} badge-dot">
+                    ${dept.waitMin <= 10 ? 'Short Wait' : dept.waitMin <= 25 ? 'Moderate' : 'Long Wait'}
+                  </span>`
+              }
+            </div>
+          </div>
+
+          <div class="queue-card-body">
+            <div class="queue-stat-item">
+              <div class="queue-stat-label">Now Serving</div>
+              <div class="queue-stat-value">#${dept.serving}</div>
+              <div class="queue-stat-sub">Current token</div>
+            </div>
+            <div class="queue-stat-item">
+              <div class="queue-stat-label">In Queue</div>
+              <div class="queue-stat-value">${isClosed ? '—' : dept.queue}</div>
+              <div class="queue-stat-sub">Waiting</div>
+            </div>
+            <div class="queue-stat-item">
+              <div class="queue-stat-label">Est. Wait</div>
+              <div class="queue-stat-value" style="font-size:1.2rem;">${isClosed ? '—' : formatWait(dept.waitMin)}</div>
+              <div class="queue-stat-sub">Approximate</div>
+            </div>
+            <div class="queue-stat-item">
+              <div class="queue-stat-label">Fast-Track</div>
+              <div class="queue-stat-value" style="font-size:1.1rem;color:var(--gold);">
+                ${isClosed ? '—' : (dept.queue < 10 ? '✓' : '—')}
+              </div>
+              <div class="queue-stat-sub">${isClosed ? 'Closed' : dept.queue < 10 ? 'Available' : 'Full'}</div>
+            </div>
+          </div>
+
+          <div class="queue-progress-section">
+            <div style="font-size:.72rem;color:var(--muted);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.4rem;">
+              Queue Visual (last 20 tokens)
+            </div>
+            <div class="queue-tokens-visual">${dots}</div>
+            <div style="display:flex;gap:1rem;margin-top:.5rem;font-size:.7rem;color:var(--muted);">
+              <span style="display:flex;align-items:center;gap:.3rem;"><span style="width:8px;height:8px;border-radius:2px;background:var(--forest-mid);display:inline-block;"></span> Served</span>
+              <span style="display:flex;align-items:center;gap:.3rem;"><span style="width:10px;height:8px;border-radius:2px;background:var(--gold);display:inline-block;"></span> Current</span>
+              <span style="display:flex;align-items:center;gap:.3rem;"><span style="width:8px;height:8px;border-radius:2px;background:var(--cream-dark);display:inline-block;"></span> Waiting</span>
+            </div>
+          </div>
+
+          <div class="queue-card-footer">
+            <div class="queue-doctor-info">
+              <div class="queue-doctor-avatar">
+                <img src="${docImg}" alt="${dept.doctor}" style="width: 100%; height: 100%; object-fit: cover; object-position: ${dept.docPos || 'center'};">
+              </div>
+              <div>
+                <div class="queue-doctor-name">${dept.doctor}</div>
+                <div class="queue-doctor-room">${dept.room}</div>
+              </div>
+            </div>
+            ${!isClosed ? `
+            <button class="btn btn-primary" style="padding:.5rem 1rem;font-size:.82rem;"
+              onclick="quickBook('${dept.name}')">
+              Book Token
+            </button>` : `
+            <span style="font-size:.78rem;color:var(--muted);">Opens tomorrow 9 AM</span>`}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  /* ── Alerts mini ── */
+  function renderAlertsMini() {
+    const list = document.getElementById('alertsMiniList');
+    if (!list) return;
+    const recent = MQ.alerts.slice(0, 4);
+    list.innerHTML = recent.map(a => `
+      <div class="alert-mini-item">
+        <span class="alert-mini-icon">${a.icon}</span>
+        <div>
+          <div class="alert-mini-title">${a.title}</div>
+          <div class="alert-mini-time">${timeAgo(a.time)}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  /* ── My Token panel ── */
+  /* ── My Token panel ── */
+  function renderMyToken() {
+    const panel = document.getElementById('myTokenPanel');
+    if (!panel) return;
+    
+    if (!myActiveToken) {
+      panel.innerHTML = `
+        <div class="my-token-empty">
+          <div class="my-token-empty-icon">
+            <img src="id-card-token.png" style="width: 56px; height: 56px; object-fit: contain; opacity: 0.6;">
+          </div>
+          <div>No active token.<br>Book one to track your position.</div>
+        </div>`;
+      return;
+    }
+    
+    const t = myActiveToken;
+    const dept = MQ.departments.find(d => d.name === t.dept);
+    const currentPos = Math.max(0, t.queuePos - (dept ? (dept.serving - (t.queuePos + t.originalServing - 1)) : 0));
+    const updatedWait = dept ? calculateWaitTime(dept.waitMin, Math.max(1, currentPos)) : t.waitMin;
+
+    panel.innerHTML = `
+      <div class="my-token-display">
+        <div style="font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:.4rem;">Token</div>
+        <div class="my-token-num">${t.display}</div>
+        <div class="my-token-id">${t.id}</div>
+      </div>
+      <div class="my-token-meta-row">
+        <span class="my-token-meta-label">Department</span>
+        <span class="my-token-meta-value">${t.deptIcon} <span>${t.dept}</span></span>
+      </div>
+      <div class="my-token-meta-row">
+        <span class="my-token-meta-label">Doctor</span>
+        <span class="my-token-meta-value">${t.doctor}</span>
+      </div>
+      <div class="my-token-meta-row">
+        <span class="my-token-meta-label">Est. Wait</span>
+        <span class="my-token-meta-value" style="color:var(--forest-mid);font-size:1rem;">${formatWait(updatedWait)}</span>
+      </div>
+      <div class="my-token-meta-row">
+        <span class="my-token-meta-label">Type</span>
+        <span class="my-token-meta-value">
+          <img src="${t.type === 'fasttrack' ? 'premium-icon.png' : 'id-card-token.png'}" alt="Icon">
+          <span>${t.type === 'fasttrack' ? 'Fast-Track' : 'Standard'}</span>
+        </span>
+      </div>
+      <button class="btn btn-secondary" style="width:100%;justify-content:center;margin-top:.75rem;font-size:.82rem;"
+        onclick="cancelToken()">Cancel Token</button>
+    `;
+  }
+
+  function cancelToken() {
+    myActiveToken = null;
+    renderMyToken();
+    showToast('Token Cancelled', 'Your queue position has been released.', '🗑️');
+  }
+
+  /* ── Filter ── */
+  function filterQueue(type, btn) {
+    currentFilter = type;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderQueueCards(MQ.departments);
+  }
+
+  /* ── Open booking modals ── */
+  function openSidebarBooking() {
+    const sel   = document.getElementById('sidebarDeptSelect');
+    const qSel  = document.getElementById('qDeptSelect');
+    if (sel && sel.value && qSel) qSel.value = sel.value;
+    document.getElementById('queueBookingModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeQueueModal() {
+    document.getElementById('queueBookingModal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  function quickBook(deptName) {
+    const qSel = document.getElementById('qDeptSelect');
+    if (qSel) qSel.value = deptName;
+    openSidebarBooking();
+  }
+  function selectQTokenType(type) {
+    qTokenType = type;
+    document.getElementById('qOptStandard').style.border  = type === 'standard'  ? '2px solid var(--forest)' : '2px solid var(--border)';
+    document.getElementById('qOptStandard').style.background = type === 'standard' ? 'rgba(44,92,66,0.05)' : '';
+    document.getElementById('qOptFasttrack').style.border = type === 'fasttrack' ? '2px solid var(--gold)' : '2px solid var(--border)';
+    document.getElementById('qOptFasttrack').style.background = type === 'fasttrack' ? 'rgba(201,168,76,0.07)' : '';
+  }
+
+  function submitQueueBooking(e) {
+    e.preventDefault();
+    const name = document.getElementById('qPatientName').value.trim();
+    const dept = document.getElementById('qDeptSelect').value;
+    if (!name || !dept) return;
+
+    const token = generateToken(dept, qTokenType);
+    token.originalServing = MQ.departments.find(d => d.name === dept)?.serving || 0;
+    myActiveToken = token;
+
+    closeQueueModal();
+    renderMyToken();
+    renderQueueCards(MQ.departments);
+    showToast('Token Booked!', `#${token.display} · ${dept} · ${formatWait(token.waitMin)}`, '🎫');
+  }
+
+  document.getElementById('queueBookingModal').addEventListener('click', function(e) {
+    if (e.target === this) closeQueueModal();
+  });
+
+  /* ── Countdown + auto-refresh ── */
+  function startRefreshCountdown() {
+    const bar = document.getElementById('refreshProgressBar');
+    const ind = document.getElementById('refreshIndicator');
+    secondsLeft = refreshSeconds;
+
+    const tick = setInterval(() => {
+      secondsLeft--;
+      if (bar) bar.style.width = ((secondsLeft / refreshSeconds) * 100) + '%';
+      if (ind) ind.textContent = `Refreshes in ${secondsLeft}s`;
+      if (secondsLeft <= 0) {
+        clearInterval(tick);
+        secondsLeft = refreshSeconds;
+        if (bar) bar.style.width = '100%';
+        startRefreshCountdown();
+      }
+    }, 1000);
+  }
+
+  /* ── Last updated label ── */
+  function updateLastUpdatedLabel() {
+    const el = document.getElementById('lastUpdated');
+    if (el) el.textContent = `Updated at ${formatTime(new Date())}`;
+  }
+
+  /* ── Mobile nav ── */
+  document.getElementById('mobileToggle').addEventListener('click', function() {
+    const nl = document.getElementById('navLinks');
+    nl.classList.toggle('open');
+  });
+
+  /* ── Init ── */
+  populateDeptDropdowns();
+  renderQueueCards(MQ.departments);
+  renderAlertsMini();
+  renderMyToken();
+  updateLastUpdatedLabel();
+  startRefreshCountdown();
+
+  const refresher = startQueueRefresh((depts) => {
+    renderQueueCards(depts);
+    renderMyToken();
+    updateLastUpdatedLabel();
+  }, 30000);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeQueueModal();
+  });
+</script>
+</body>
+</html>
